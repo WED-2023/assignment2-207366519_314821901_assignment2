@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+    <head>
+        <meta charset="UTF-8">
+        <title>הרשמה לאפליקציית פיקאצ'ו</title>
+        <link rel="stylesheet" href="styles.css">
+        <script src="game.js" defer></script>
+      </head>
+<body>
+
+    <header>
+        <img src="logo.png" alt="לוגו האתר">
+        <span style="font-size: 24px; margin-right: 10px;">האפליקציה שלי</span>
+      </header>
+    
+      <menu>
+        <button onclick="showScreen('welcome')">ברוכים הבאים</button>
+        <button onclick="showScreen('register')">הרשמה</button>
+        <button onclick="showScreen('login')">התחברות</button>
+      </menu>
+    
+      <div id="welcome" class="content active">
+        <h2>ברוכים הבאים!</h2>
+        
+        <img src="logo.png" alt="לוגו" width="100"><br>
+        <p><a href="https://tamircohen.github.io">לאתר האישי שלי</a></p>
+        <div class="buttons">
+          <button onclick="showScreen('register')">להרשמה</button>
+          <button onclick="showScreen('login')">להתחברות</button>
+        </div>
+      </div>
+    
+      <div id="register" class="content">
+        <h2>Sign up</h2>
+        <form id="registrationForm" onsubmit="onSignUpClick(event)">
+            <input id="username" type="text" placeholder="User Name" required onblur="checkUsername()">
+            <input id="password" type="password" placeholder="Password" required onblur="checkPassword()">
+            <input id="passwordConfirmation" type="password" placeholder="Confirm your Password" required onblur="checkPasswordConfirmation()">
+            <input id="email" type="email" placeholder="Email" required onblur="checkEmail()">
+            <input id="givenName" type="text" placeholder="Given Name" required onblur="checkName()">
+            <input id="familyName" type="text" placeholder="Family Name" required onblur="checkName()">
+            <input id="dateOfBirth" type="date" placeholder="Date of Birth" required onblur="checkDate()">
+            <button id="submitSignUp" type="submit">הרשמה</button>
+        </form>
+        <div class="buttons">
+          <button onclick="showScreen('welcome')">חזרה לדף הבית</button>
+          <button onclick="showScreen('login')">להתחברות</button>
+        </div>
+      </div>
+      <div id='game' class="content">
+        <h2>משחק</h2>
+        <p>המשחק שלי יתחיל כאן...</p>
+     </div>
+      <div id="login" class="content">
+        <h2>Sign in</h2>
+        <form id="loginForm">
+            <input id="logInUsername" type="text" placeholder="User Name" required>
+            <input id="logInPassword" type="password" placeholder="Password" required>
+            <button id="submitLogIn" type="submit" >התחברות</button>
+        </form>
+      </div>
+    
+      <footer>
+    
+      </footer>
+
+</body>
+</html>
