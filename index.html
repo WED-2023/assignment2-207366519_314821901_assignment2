@@ -34,34 +34,151 @@
           <button onclick="showScreen('login')">להתחברות</button>
         </div>
       </div>
-    
+
       <div id="register" class="content">
         <h2>Sign up</h2>
-        <form id="registrationForm" onsubmit="onSignUpClick(event)">
-            <input id="username" type="text" placeholder="User Name" required onblur="checkUsername()">
-            <input id="password" type="password" placeholder="Password" required onblur="checkPassword()">
-            <input id="passwordConfirmation" type="password" placeholder="Confirm your Password" required onblur="checkPasswordConfirmation()">
-            <input id="email" type="email" placeholder="Email" required onblur="checkEmail()">
-            <input id="givenName" type="text" placeholder="Given Name" required onblur="checkName()">
-            <input id="familyName" type="text" placeholder="Family Name" required onblur="checkName()">
-            <input id="dateOfBirth" type="date" placeholder="Date of Birth" required onblur="checkDate()">
-            <button id="submitSignUp" type="submit">הרשמה</button>
+        <form id="registrationForm" onsubmit="onSignUpClick(event)" autocomplete="off" class="form">
+          <div id="step-1" class="form-step active-step">
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="username" type="text" placeholder="User Name" required onblur="checkUsername()" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="usernameError"></span>
+            </div>
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="password" type="password" placeholder="Password" required onblur="checkPassword()" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="passwordError"></span>
+            </div>
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="passwordConfirmation" type="password" placeholder="Confirm Password" required onblur="checkPasswordConfirmation()" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="passwordConfirmationError"></span>
+            </div>
+      
+            <button type="button" class="btn block-cube block-cube-hover" onclick="nextStep(2)">
+              <div class="bg-top"><div class="bg-inner"></div></div>
+              <div class="bg-right"><div class="bg-inner"></div></div>
+              <div class="bg"><div class="bg-inner"></div></div>
+              <div class="text">Continue</div>
+            </button>
+          </div>
+    
+          <div id="step-2" class="form-step">
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="email" type="email" placeholder="Email" required onblur="checkEmail()" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="emailError"></span>
+            </div>
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="givenName" type="text" placeholder="Given Name" required onblur="checkName('givenName', 'givenNameError')" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="givenNameError"></span>
+            </div>
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="familyName" type="text" placeholder="Family Name" required onblur="checkName('familyName', 'familyNameError')" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="familyNameError"></span>
+            </div>
+      
+            <div class="form-nav">
+              <button type="button" class="btn" onclick="nextStep(1)">⬅ Back</button>
+              <button type="button" class="btn block-cube block-cube-hover" onclick="nextStep(3)">
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+                <div class="text">Continue</div>
+              </button>
+            </div>
+          </div>
+      
+          <div id="step-3" class="form-step">
+      
+            <div class="input-wrapper">
+              <div class="control block-cube block-input">
+                <input id="dateOfBirth" type="date" placeholder="Date of Birth" required onblur="checkDate()" />
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+              </div>
+              <span class="error-message" id="dateError"></span>
+            </div>
+      
+            <div class="form-nav">
+              <button type="button" class="btn" onclick="nextStep(2)">⬅ Back</button>
+              <button id="submitSignUp" type="submit" class="btn block-cube block-cube-hover">
+                <div class="bg-top"><div class="bg-inner"></div></div>
+                <div class="bg-right"><div class="bg-inner"></div></div>
+                <div class="bg"><div class="bg-inner"></div></div>
+                <div class="text">Register</div>
+              </button>
+            </div>
+          </div>
+      
         </form>
-        <div class="buttons">
-          <button onclick="showScreen('welcome')">חזרה לדף הבית</button>
-          <button onclick="showScreen('login')">להתחברות</button>
-        </div>
       </div>
+      
+      
+      
       <div id='game' class="content">
         <h2>משחק</h2>
         <p>המשחק שלי יתחיל כאן...</p>
      </div>
       <div id="login" class="content">
-        <h2>Sign in</h2>
-        <form id="loginForm">
-            <input id="logInUsername" type="text" placeholder="User Name" required>
-            <input id="logInPassword" type="password" placeholder="Password" required>
-            <button id="submitLogIn" type="submit" >התחברות</button>
+        <form id="loginForm" autocomplete="off" class="form">
+          <h2>Sign in</h2>
+          <div class="control block-cube block-input">
+            <input id="logInUsername" name="username" type="text" placeholder="User Name" required />
+            <div class="bg-top"><div class="bg-inner"></div></div>
+            <div class="bg-right"><div class="bg-inner"></div></div>
+            <div class="bg"><div class="bg-inner"></div></div>
+          </div>
+          <div class="control block-cube block-input">
+            <input id="logInPassword" name="password" type="password" placeholder="Password" required />
+            <div class="bg-top"><div class="bg-inner"></div></div>
+            <div class="bg-right"><div class="bg-inner"></div></div>
+            <div class="bg"><div class="bg-inner"></div></div>
+          </div>
+          <button id="submitLogIn" type="submit" class="btn block-cube block-cube-hover">
+            <div class="bg-top"><div class="bg-inner"></div></div>
+            <div class="bg-right"><div class="bg-inner"></div></div>
+            <div class="bg"><div class="bg-inner"></div></div>
+            <div class="text">Log in</div>
+          </button>
+          <span class="error-message" id="logInError"></span>
+          <div class='credits'>
+            <a href='https://codepen.io/marko-zub/' target='_blank'>
+            </a>
+          </div>
         </form>
       </div>
     
