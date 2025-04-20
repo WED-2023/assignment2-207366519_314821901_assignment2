@@ -5,6 +5,7 @@
         <title>הרשמה לאפליקציית פיקאצ'ו</title>
         <link rel="stylesheet" href="styles.css">
         <script src="game.js" defer></script>
+        <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
       </head>
 <body>
     <div class="video-background">
@@ -25,16 +26,27 @@
       </menu>
     
       <div id="welcome" class="content active">
-        <h2>ברוכים הבאים!</h2>
-        
+        <h2>Welcome to StarQuest</h2>
         <img src="logo.png" alt="לוגו" width="100"><br>
-        <p><a href="https://tamircohen.github.io">לאתר האישי שלי</a></p>
         <div class="buttons">
           <button onclick="showScreen('register')">להרשמה</button>
           <button onclick="showScreen('login')">להתחברות</button>
         </div>
       </div>
 
+      <div id="about" class="buttons">
+        <button onclick="document.getElementById('aboutModal').showModal()">About</button>
+      </div>
+
+      <dialog id="aboutModal">
+        <p>
+          This is about
+        </p>
+        <button onclick="document.getElementById('aboutModal').close()">X</button>
+
+      </dialog>
+
+    
       <div id="register" class="content">
         <h2>Sign up</h2>
         <form id="registrationForm" onsubmit="onSignUpClick(event)" autocomplete="off" class="form">
@@ -183,7 +195,14 @@
       </div>
     
       <footer>
-    
+        <div id="authors">
+          <p>
+            <a href="https://wed-2023.github.io/314821901" target="_blank">Asaf Baroch - 314821901</a>
+          </p>
+          <p>
+            <a href="https://wed-2023.github.io/207366519" target="_blank">Lior Sachakov - 207366519</a>
+          </p>
+        </div>
       </footer>
 
 </body>

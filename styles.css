@@ -1,8 +1,9 @@
 body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    overflow: hidden; 
-    position: relative;
+  margin: 0;
+  overflow: hidden; 
+  position: relative;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1em;
 }
 
 .video-background {
@@ -49,7 +50,6 @@ body {
 
   .content {
     display: none;
-    padding: 20px;
   }
 
   .active {
@@ -57,16 +57,31 @@ body {
   }
 
   footer {
-    background-color: #f0f0f0;
+    background-color: rgba(0, 0, 0, 0.4);
     text-align: center;
     padding: 15px;
     position: fixed;
     bottom: 0;
     width: 100%;
+    font-size: 12px;
+    color: #ffffff;
+    backdrop-filter: blur(6px); 
+    -webkit-backdrop-filter: blur(6px); 
   }
+  
 
+  #about {
+    position: fixed;
+    top: 0;
+    left: 0;
+    margin: 10px; 
+  }
+  
   .buttons {
-    margin-top: 30px;
+    margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
   }
 
   .buttons button {
@@ -74,6 +89,21 @@ body {
     padding: 15px 25px;
     font-size: 16px;
     cursor: pointer;
+    background-color: transparent;
+    border: 2px solid #00ffff;
+    color: #ffffff;
+    padding: 10px 25px;
+    margin: 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Press Start 2P', cursive;
+    transition: all 0.2s ease-in-out;
+    font-size: 0.8em;
+    box-shadow: 0 0 10px #00ffff;
+  }
+  .buttons button:hover {
+    background-color: #00ffff;
+    color: #000;
   }
 
   a {
@@ -255,5 +285,57 @@ body {
     margin-top: 6px;
     padding-left: 6px;
     display: block;
+  }
+
+
+  #welcome.content {
+    display: none;
+  }
+  
+  #welcome.content.active {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-family: 'Press Start 2P', cursive;
+    color: #ffffff;
+    font-size: 1.4em;
+    height: 40vh;
+  }
+
+  #authors {
+    font-size: 12px;
+    color: #333;
+  }
+  
+  #authors p {
+    margin: 4px 0;
+    line-height: 1.4;
+  }
+  
+  
+  #authors a {
+    color: #00ffff;
+    text-decoration: none;
+  }
+  
+  #authors a:hover {
+    text-decoration: underline;
+  }
+  
+  
+  #aboutModal { 
+    background-color: transparent;
+    border-color: #00ffff;
+    box-shadow: 0 0 10px #00ffff;
+    color: white;
+  }
+
+  #about {
+    position: fixed; 
+    top: 0;
+    left: 0;
+    margin: 10px; 
   }
   

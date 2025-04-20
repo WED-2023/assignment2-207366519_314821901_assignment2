@@ -226,3 +226,25 @@ document.getElementById('loginForm').addEventListener('submit', function (event)
     document.getElementById('logInError').textContent = '';
   }
   
+
+  function BackToHomePage() {
+    document.getElementById('aboutModal').close();
+  }
+
+  const about_dialog = document.getElementById('aboutModal');
+
+function isClickOutsideDialog(dialog, event) {
+  const rect = dialog.getBoundingClientRect();
+  return (
+    event.clientX < rect.left ||
+    event.clientX > rect.right || 
+    event.clientY < rect.top ||
+    event.clientY > rect.bottom
+  );
+}
+
+about_dialog.addEventListener('click', (event) => {
+  if (isClickOutsideDialog(about_dialog, event)) {
+    BackToHomePage();
+  }
+});
