@@ -7,18 +7,18 @@ body {
 }
 
 .video-background {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
     z-index: -1; 
-    overflow: hidden;
+  overflow: hidden;
 }
 
 .video-background video {
-    width: 100%;
-    height: 100%;
+  width: 100%;
+  height: 100%;
     object-fit: cover; 
 }
 
@@ -29,10 +29,10 @@ body {
     text-align: center;
   }
 
-  header img {
-    width: 50px;
-    vertical-align: middle;
-  }
+header img {
+  width: 50px;
+  vertical-align: middle;
+}
 
   menu {
     background-color: #e0e0e0;
@@ -42,19 +42,19 @@ body {
     gap: 20px;
   }
 
-  menu button {
-    padding: 10px 20px;
-    cursor: pointer;
-    font-weight: bold;
-  }
+menu button {
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
 
   .content {
     display: none;
   }
 
-  .active {
-    display: block;
-  }
+.active {
+  display: block;
+}
 
   footer {
     background-color: rgba(0, 0, 0, 0.4);
@@ -106,9 +106,9 @@ body {
     color: #000;
   }
 
-  a {
-    color: #007acc;
-  }
+a {
+  color: #007acc;
+}
 
 
 
