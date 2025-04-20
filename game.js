@@ -1,10 +1,10 @@
 
   
-  
+
 var registerdUsers = [{ userName: "p", password: "testuser" }];
 let currentUser = null;
 
-
+ 
 function showScreen(screenId) {
     const currentRegisterScreen = document.querySelector('#register');
     const wasRegisterVisible = currentRegisterScreen.classList.contains('active');
