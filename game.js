@@ -312,8 +312,14 @@ shipImg.src = "rocket.png";
 let gameOver = false;
 let gameWon = false;
 
+function updateLivesDisplay() {
+  const livesDisplay = document.getElementById('lives-display');
+  livesDisplay.textContent = ship.health;
+}
+
 document.getElementById("StartGameButton").addEventListener("click", () => {
-  setupGame(); // Add this line to initialize the enemies
+  setupGame();
+  resetGame();
   loop();
   document.getElementById("StartGameButton").disabled = true;
 });
@@ -344,11 +350,6 @@ function loop(){
 }
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
-  
-  // Draw health
-  ctx.fillStyle = 'white';
-  ctx.font = '20px Arial';
-  ctx.fillText(`Health: ${ship.health}`, 10, 30);
   
   // Draw game elements if game is not over
   if (!gameOver && !gameWon) {
@@ -476,6 +477,7 @@ function update() {
         bullet.y + enemy_bullet_height > ship.y) {
       enemy_bullets.splice(i, 1);
       ship.health--;
+      updateLivesDisplay();
       
       if (ship.health <= 0) {
         gameOver = true;
@@ -515,6 +517,7 @@ function resetGame() {
   ship.x = canvas_width / 2;
   ship.y = canvas_height - 80;
   ship.health = 3;
+  updateLivesDisplay();
   
   // Reset game state
   gameOver = false;
