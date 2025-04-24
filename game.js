@@ -270,6 +270,13 @@ const bullet_speed = 2;
 const bullet_width = 25;
 const bullet_height = 30;
 
+//enemy bullets vars
+const enemy_bullets = [];
+let canEnemyShoot = true;
+const enemy_bullet_speed = 2;
+const enemy_bullet_width = 25;
+const enemy_bullet_height = 30;
+
 //enemies vars
 const enemies = [];
 const enemiesRows = 4;
@@ -283,15 +290,20 @@ enemyImg.src = "enemy.png"
 
 //ship vars
 const ship_speed = 2
-const ship = { x: canvas_width / 2, y: canvas_height - 80, width: 40, height: 60, speed: ship_speed};
+const ship = { 
+  x: canvas_width / 2, 
+  y: canvas_height - 80, 
+  width: 40, 
+  height: 60, 
+  speed: ship_speed,
+  health: 3  // Starting health
+};
 const shipImg = new Image();
 shipImg.src = "rocket.png";
 
-
-
-
-
-
+// Game state
+let gameOver = false;
+let gameWon = false;
 
 document.getElementById("StartGameButton").addEventListener("click", () => {
   setupGame(); // Add this line to initialize the enemies
@@ -325,32 +337,86 @@ function loop(){
 }
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
-  ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
-  bullets.forEach(bullet => {
-    ctx.drawImage(bulletImg,bullet.x,bullet.y,bullet_width,bullet_height)
-  });
-  enemies.forEach(enemy => {
-    if (enemy.alive) {
-      ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
-    }
-  });
+  
+  // Draw health
+  ctx.fillStyle = 'white';
+  ctx.font = '20px Arial';
+  ctx.fillText(`Health: ${ship.health}`, 10, 30);
+  
+  // Draw game elements if game is not over
+  if (!gameOver && !gameWon) {
+    ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
+    bullets.forEach(bullet => {
+      ctx.drawImage(bulletImg, bullet.x, bullet.y, bullet_width, bullet_height)
+    });
+    enemies.forEach(enemy => {
+      if (enemy.alive) {
+        ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
+      }
+    });
+    enemy_bullets.forEach(bullet => {
+      ctx.drawImage(bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
+    });
+  }
+  
+  // Draw game over screen
+  if (gameOver) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, canvas_width, canvas_height);
+    ctx.fillStyle = 'white';
+    ctx.font = '48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Game Over!', canvas_width / 2, canvas_height / 2);
+    ctx.font = '24px Arial';
+    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
+  }
+  
+  // Draw win screen
+  if (gameWon) {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    ctx.fillRect(0, 0, canvas_width, canvas_height);
+    ctx.fillStyle = 'white';
+    ctx.font = '48px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('You Won!', canvas_width / 2, canvas_height / 2);
+    ctx.font = '24px Arial';
+    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
+  }
 }
- 
+
 function update() {
+  // Handle restart
+  if ((gameOver || gameWon) && keys['r']) {
+    resetGame();
+    return;
+  }
+  
+  if (gameOver || gameWon) return;
+  
   if (keys["ArrowLeft"] && ship.x  >  ship.width + 0 ) ship.x -= ship.speed;
   if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship.speed;
   if (keys["ArrowUp"] && ship.y > 0.6*canvas_height ) ship.y -= ship.speed;
   if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship.speed;
   if (keys[" "] || keys["Spacebar"]) shoot();
   
+  // Enemy shooting
+  enemyShoot();
+  
+  // Update bullet positions
   bullets.forEach(b => b.y -= b.speed);
-
+  
+  // Update enemy bullet positions
+  enemy_bullets.forEach(b => b.y += b.speed);
+  
+  // Check for bullet-enemy collisions
   for (let i = bullets.length - 1; i >= 0; i--) {
     const bullet = bullets[i];
+    
     if (bullet.y < 0) {
       bullets.splice(i, 1);
       continue;
     }
+    
     for (let j = enemies.length - 1; j >= 0; j--) {
       const enemy = enemies[j];
       if (enemy.alive && 
@@ -360,7 +426,36 @@ function update() {
           bullet.y + bullet_height > enemy.y) {
         enemy.alive = false;
         bullets.splice(i, 1);
+        
+        // Check if all enemies are dead
+        if (enemies.every(enemy => !enemy.alive)) {
+          gameWon = true;
+        }
         break;
+      }
+    }
+  }
+
+  // Check for enemy bullet-ship collisions
+  for (let i = enemy_bullets.length - 1; i >= 0; i--) {
+    const bullet = enemy_bullets[i];
+    
+    // Remove bullets that go off screen
+    if (bullet.y > canvas_height) {
+      enemy_bullets.splice(i, 1);
+      continue;
+    }
+    
+    // Check collision with ship
+    if (bullet.x < ship.x + ship.width &&
+        bullet.x + enemy_bullet_width > ship.x &&
+        bullet.y < ship.y + ship.height &&
+        bullet.y + enemy_bullet_height > ship.y) {
+      enemy_bullets.splice(i, 1);
+      ship.health--;
+      
+      if (ship.health <= 0) {
+        gameOver = true;
       }
     }
   }
@@ -372,4 +467,40 @@ function shoot() {
     canShoot = false;
     setTimeout(() => canShoot = true, 300);
   }
+}
+
+function enemyShoot() {
+  if (canEnemyShoot) {
+    // Get all alive enemies
+    const aliveEnemies = enemies.filter(enemy => enemy.alive);
+    if (aliveEnemies.length > 0) {
+      // Choose a random alive enemy
+      const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
+      enemy_bullets.push({
+        x: randomEnemy.x + enemy_width / 2 - enemy_bullet_width / 2,
+        y: randomEnemy.y + enemy_height,
+        speed: enemy_bullet_speed
+      });
+      canEnemyShoot = false;
+      setTimeout(() => canEnemyShoot = true, 1000); // Enemy shoots every second
+    }
+  }
+}
+
+function resetGame() {
+  // Reset ship
+  ship.x = canvas_width / 2;
+  ship.y = canvas_height - 80;
+  ship.health = 3;
+  
+  // Reset game state
+  gameOver = false;
+  gameWon = false;
+  
+  // Clear bullets
+  bullets.length = 0;
+  enemy_bullets.length = 0;
+  
+  // Reset enemies
+  enemies.forEach(enemy => enemy.alive = true);
 }
