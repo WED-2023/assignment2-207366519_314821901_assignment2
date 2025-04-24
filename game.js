@@ -342,11 +342,28 @@ function update() {
   if (keys["ArrowUp"] && ship.y > 0.6*canvas_height ) ship.y -= ship.speed;
   if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship.speed;
   if (keys[" "] || keys["Spacebar"]) shoot();
-  bullets.forEach(b => b.y -= b.speed);
-  for (let i = bullets.length - 1; i >= 0; i--) {
-    if (bullets[i].y < 0) bullets.splice(i, 1);
-  }
   
+  bullets.forEach(b => b.y -= b.speed);
+
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const bullet = bullets[i];
+    if (bullet.y < 0) {
+      bullets.splice(i, 1);
+      continue;
+    }
+    for (let j = enemies.length - 1; j >= 0; j--) {
+      const enemy = enemies[j];
+      if (enemy.alive && 
+          bullet.x < enemy.x + enemy.width &&
+          bullet.x + bullet_width > enemy.x &&
+          bullet.y < enemy.y + enemy.height &&
+          bullet.y + bullet_height > enemy.y) {
+        enemy.alive = false;
+        bullets.splice(i, 1);
+        break;
+      }
+    }
+  }
 }
 
 function shoot() {
