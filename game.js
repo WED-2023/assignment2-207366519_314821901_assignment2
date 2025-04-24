@@ -1,6 +1,3 @@
-
-  
-
 var registerdUsers = [{ userName: "p", password: "testuser" }];
 let currentUser = null;
 
@@ -275,8 +272,14 @@ const bullet_height = 30;
 
 //enemies vars
 const enemies = [];
-const enemiesRows = 5;
-const enemiesCols = 4;
+const enemiesRows = 4;
+const enemiesCols = 5;
+var enemy_speed = 1; 
+// const enemy = {x:20, y:0, alive:true}
+const enemy_width = 50
+const enemy_height = 30 
+const enemyImg = new Image();
+enemyImg.src = "enemy.png"
 
 //ship vars
 const ship_speed = 2
@@ -291,18 +294,29 @@ shipImg.src = "rocket.png";
 
 
 document.getElementById("StartGameButton").addEventListener("click", () => {
+  setupGame(); // Add this line to initialize the enemies
   loop();
   document.getElementById("StartGameButton").disabled = true;
 });
 
-// function setupGame(){
-//   // document.addEventListener(BeforeUnloadEvent,stoptimer)...BackToHomePage.
+function setupGame() {
+  const spacingX = 60; // horizontal spacing between enemies
+  const spacingY = 50; // vertical spacing between enemies
+  const startX = 50;   // starting x position
+  const startY = 30;   // starting y position
 
-//   document.getElementById("StartGameButton").addEventListener("click", loop);
-//   player = new Object();
-//   player.start = new Object(); //will hold the x,y cords of the line start
-//   player.end = new Object(); //will hold the x,y cords the the line end
-//}
+  for (let i = 0; i < enemiesRows; i++) {
+    for (let j = 0; j < enemiesCols; j++) {
+      enemies.push({
+        x: startX + j * spacingX,
+        y: startY + i * spacingY,
+        alive: true,
+        width: enemy_width,
+        height: enemy_height
+      });
+    }
+  }
+}
 
 function loop(){
   draw()
@@ -314,6 +328,11 @@ function draw(){
   ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
   bullets.forEach(bullet => {
     ctx.drawImage(bulletImg,bullet.x,bullet.y,bullet_width,bullet_height)
+  });
+  enemies.forEach(enemy => {
+    if (enemy.alive) {
+      ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
+    }
   });
 }
  
@@ -327,6 +346,7 @@ function update() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     if (bullets[i].y < 0) bullets.splice(i, 1);
   }
+  
 }
 
 function shoot() {
