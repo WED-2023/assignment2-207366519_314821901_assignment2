@@ -275,11 +275,12 @@ const enemies = [];
 const enemiesRows = 4;
 const enemiesCols = 5;
 var enemy_speed = 1; 
-// const enemy = {x:20, y:0, alive:true}
 const enemy_width = 50
 const enemy_height = 30 
 const enemyImg = new Image();
 enemyImg.src = "enemy.png"
+let mostLeftEnemy = enemies[0][0].x; // x position of the leftmost enemy
+const mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x; // x position of the rightmost enemy
 
 //ship vars
 const ship_speed = 2
@@ -306,14 +307,13 @@ function setupGame() {
   const startY = 30;   // starting y position
 
   for (let i = 0; i < enemiesRows; i++) {
+    enemies[i] = []; // each row is a new array
     for (let j = 0; j < enemiesCols; j++) {
-      enemies.push({
+      enemies[i][j] = {
         x: startX + j * spacingX,
         y: startY + i * spacingY,
         alive: true,
-        width: enemy_width,
-        height: enemy_height
-      });
+      };
     }
   }
 }
@@ -329,10 +329,12 @@ function draw(){
   bullets.forEach(bullet => {
     ctx.drawImage(bulletImg,bullet.x,bullet.y,bullet_width,bullet_height)
   });
-  enemies.forEach(enemy => {
-    if (enemy.alive) {
-      ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy.width, enemy.height);
-    }
+  enemies.forEach(row => {
+    row.forEach(enemy => {
+      if (enemy.alive) {
+        ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy_width, enemy_height);
+      }
+    });
   });
 }
  
@@ -346,8 +348,27 @@ function update() {
   for (let i = bullets.length - 1; i >= 0; i--) {
     if (bullets[i].y < 0) bullets.splice(i, 1);
   }
-  
-}
+
+
+  //check if enemy got hit
+  if(mostLeftEnemy < 0 || mostRightEnemy > canvas_width - enemy_width){
+    enemy_speed = -enemy_speed; // reverse direction
+    };
+    mostLeftEnemy = Infinity; // x position of the leftmost enemy
+    mostRightEnemy = -Infinity; // x position of the rightmost enemy
+  enemies.forEach(row => {
+    row.forEach(enemy => {
+      if (enemy.alive) {
+        if(enemy.x < mostLeftEnemy){
+          mostLeftEnemy = enemy.x;
+        }else if(enemy.x > mostRightEnemy){
+          mostRightEnemy = enemy.x;
+        }
+        enemy.x += enemy_speed;
+      }
+    });
+  });}
+
 
 function shoot() {
   if (canShoot) {
