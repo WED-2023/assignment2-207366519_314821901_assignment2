@@ -274,13 +274,17 @@ const bullet_height = 30;
 const enemies = [];
 const enemiesRows = 4;
 const enemiesCols = 5;
-var enemy_speed = 1; 
+let enemy_speed = 3; 
 const enemy_width = 50
 const enemy_height = 30 
 const enemyImg = new Image();
 enemyImg.src = "enemy.png"
-let mostLeftEnemy = enemies[0][0].x; // x position of the leftmost enemy
-const mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x; // x position of the rightmost enemy
+let mostLeftEnemy;
+let mostRightEnemy;
+let lastActionTime = Date.now();
+const actionInterval = 5000;
+let SpeedupCounter = 0;
+let enemy_direction = 1; // 1 for right, -1 for left
 
 //ship vars
 const ship_speed = 2
@@ -316,6 +320,8 @@ function setupGame() {
       };
     }
   }
+  mostLeftEnemy = enemies[0][0].x; // x position of the leftmost enemy
+  mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x; // x position of the rightmost enemy
 }
 
 function loop(){
@@ -351,20 +357,28 @@ function update() {
 
 
   //check if enemy got hit
-  if(mostLeftEnemy < 0 || mostRightEnemy > canvas_width - enemy_width){
-    enemy_speed = -enemy_speed; // reverse direction
+  const now = Date.now();
+  if(now - lastActionTime >= actionInterval && SpeedupCounter < 4){
+    lastActionTime = now;
+    enemy_speed = enemy_speed + 1.4; // increase speed every 5 seconds
+    SpeedupCounter++;
+    console.log(enemy_speed);
+  }
+  
+  if(mostLeftEnemy <= 0 || mostRightEnemy >= canvas_width - enemy_width){
+    enemy_direction = -1 * enemy_direction; // reverse direction
     };
     mostLeftEnemy = Infinity; // x position of the leftmost enemy
     mostRightEnemy = -Infinity; // x position of the rightmost enemy
   enemies.forEach(row => {
     row.forEach(enemy => {
       if (enemy.alive) {
+        enemy.x += (enemy_speed * enemy_direction);
         if(enemy.x < mostLeftEnemy){
           mostLeftEnemy = enemy.x;
         }else if(enemy.x > mostRightEnemy){
           mostRightEnemy = enemy.x;
         }
-        enemy.x += enemy_speed;
       }
     });
   });}
