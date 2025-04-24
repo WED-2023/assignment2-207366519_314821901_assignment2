@@ -291,7 +291,7 @@ enemyImg.src = "enemy.png"
 // Explosion vars
 const explosions = [];
 const explosionImg = new Image();
-explosionImg.src = "YQDj.gif";
+explosionImg.src = "1f0V.gif";
 const explosion_width = 40;  
 const explosion_height = 30;
 
