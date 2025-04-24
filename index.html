@@ -24,6 +24,7 @@
         <div class="buttons">
           <button onclick="showScreen('register')">Sign Up</button>
           <button onclick="showScreen('login')">Sign In</button>
+          <button onclick="showScreen('game')">Game</button>
         </div>
       </div>
 
@@ -152,12 +153,6 @@
         </form>
       </div>
       
-      
-      
-      <div id='game' class="content">
-        <h2>משחק</h2>
-        <p>המשחק שלי יתחיל כאן...</p>
-     </div>
       <div id="login" class="content">
         <form id="loginForm" autocomplete="off" class="form">
           <h2>Sign in</h2>
@@ -186,7 +181,17 @@
           </div>
         </form>
       </div>
+
+
+
+      <div id='game' class="content">
+        <canvas id = "theCanvas" width = "900" height = "500"></canvas>
+        <button id = "StartGameButton" class = "buttons" >Start Game</button>
+     </div>
     
+
+
+
       <footer>
         <div id="authors">
           <p>

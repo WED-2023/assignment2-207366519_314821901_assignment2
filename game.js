@@ -248,3 +248,88 @@ about_dialog.addEventListener('click', (event) => {
     BackToHomePage();
   }
 });
+
+
+
+
+//bullet vars
+const bullet_width = 25
+const bullet_height = 40
+const bullets = [];
+const bullet_speed = 2;
+const bulletImg = new Image();
+bulletImg.src = "bullet.png"
+let canShoot = true;
+
+
+//ship vars
+const ship = { x: canvas_width / 2, y: canvas_height - 80, width: 40, height: 60, speed: ship_speed};
+const shipImg = new Image();
+const ship_speed = 2
+shipImg.src = "rocket.png";
+
+//enemies vars
+const enemies = [];
+const enemiesRows = 5;
+const enemiesCols = 4;
+
+//canva vars
+const canvas = document.getElementById("theCanvas");
+const ctx = canvas.getContext('2d');
+const canvas_width = canvas.width
+const canvas_height = canvas.height
+
+
+const keys = {};
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => delete keys[e.key]);
+
+
+
+
+
+document.getElementById("StartGameButton").addEventListener("click", () => {
+  loop();
+  document.getElementById("StartGameButton").disabled = true;
+});
+// function setupGame(){
+//   // document.addEventListener(BeforeUnloadEvent,stoptimer)...BackToHomePage.
+
+//   document.getElementById("StartGameButton").addEventListener("click", loop);
+//   player = new Object();
+//   player.start = new Object(); //will hold the x,y cords of the line start
+//   player.end = new Object(); //will hold the x,y cords the the line end
+// }
+
+function loop(){
+  draw()
+  update()
+  requestAnimationFrame(loop);
+}
+function draw(){
+  ctx.clearRect(0, 0, canvas_width, canvas_height);
+  ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
+  bullets.forEach(bullet => {
+    ctx.drawImage(bulletImg,bullet.x + bullet_width / 2,bullet.y,bullet_width,bullet_height)
+  });
+}
+ 
+function update() {
+  if (keys["ArrowLeft"] && ship.x  >  ship.width + 0 ) ship.x -= ship.speed;
+  if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship.speed;
+  if (keys["ArrowUp"] && ship.y > 0.6*canvas_height ) ship.y -= ship.speed;
+  if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship.speed;
+  if (keys[" "] || keys["Spacebar"]) shoot();
+  bullets.forEach(b => b.y -= b.speed);
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    if (bullets[i].y < 0) bullets.splice(i, 1);
+  }
+}
+
+function shoot() {
+  if (canShoot) {
+    bullets.push({ x: ship.x ,y: ship.y ,speed: bullet_speed });
+    canShoot = false;
+    setTimeout(() => canShoot = true, 300);
+  }
+}
