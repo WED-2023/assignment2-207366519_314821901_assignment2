@@ -266,22 +266,15 @@ const bullets = [];
 let canShoot = true;
 const bulletImg = new Image();
 bulletImg.src = "bullet.png"
-const bullet_speed = 4;
+const bullet_speed = 2;
 const bullet_width = 25;
 const bullet_height = 30;
-
-//enemy bullets vars
-const enemy_bullets = [];
-let canEnemyShoot = true;
-const enemy_bullet_speed = 4;
-const enemy_bullet_width = 25;
-const enemy_bullet_height = 30;
 
 //enemies vars
 const enemies = [];
 const enemiesRows = 4;
 const enemiesCols = 5;
-let enemy_speed = 5; 
+let enemy_speed = 3; 
 const enemy_width = 50
 const enemy_height = 30 
 const enemyImg = new Image();
@@ -293,43 +286,20 @@ const actionInterval = 5000;
 let SpeedupCounter = 0;
 let enemy_direction = 1; // 1 for right, -1 for left
 
-// Remove explosion vars and add explosion sound
-const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
-
 //ship vars
-const ship_speed = 7  // Increased from 2 to 5 for better responsiveness
-const ship = { 
-  x: canvas_width / 2, 
-  y: canvas_height - 80, 
-  width: 40, 
-  height: 60, 
-  speed: ship_speed,
-  health: 3
-};
+const ship_speed = 2
+const ship = { x: canvas_width / 2, y: canvas_height - 80, width: 40, height: 60, speed: ship_speed};
 const shipImg = new Image();
 shipImg.src = "rocket.png";
 
-// Game state
-let gameOver = false;
-let gameWon = false;
-let gameStartTime = 0;
 
-function updateLivesDisplay() {
-  const livesDisplay = document.getElementById('lives-display');
-  livesDisplay.textContent = ship.health;
-}
 
-function updateTimer() {
-  if (!gameOver && !gameWon) {
-    const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
-    const timerDisplay = document.getElementById('timer-display');
-    timerDisplay.textContent = currentTime + 's';
-  }
-}
+
+
+
 
 document.getElementById("StartGameButton").addEventListener("click", () => {
-  setupGame();
-  resetGame();
+  setupGame(); // Add this line to initialize the enemies
   loop();
   document.getElementById("StartGameButton").disabled = true;
 });
@@ -346,7 +316,7 @@ function setupGame() {
       enemies[i][j] = {
         x: startX + j * spacingX,
         y: startY + i * spacingY,
-        alive: true
+        alive: true,
       };
     }
   }
@@ -361,167 +331,47 @@ function loop(){
 }
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
-  
-  // Draw game elements if game is not over
-  if (!gameOver && !gameWon) {
-    updateTimer();  // Update timer each frame
-    ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
-    bullets.forEach(bullet => {
-      ctx.drawImage(bulletImg, bullet.x, bullet.y, bullet_width, bullet_height)
-    });
-    for (let row = 0; row < enemiesRows; row++) {
-      for (let col = 0; col < enemiesCols; col++) {
-        const enemy = enemies[row][col];
-        if (enemy.alive) {
-          ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy_width, enemy_height);
-        }
+  ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
+  bullets.forEach(bullet => {
+    ctx.drawImage(bulletImg,bullet.x,bullet.y,bullet_width,bullet_height)
+  });
+  enemies.forEach(row => {
+    row.forEach(enemy => {
+      if (enemy.alive) {
+        ctx.drawImage(enemyImg, enemy.x, enemy.y, enemy_width, enemy_height);
       }
-    }
-    enemy_bullets.forEach(bullet => {
-      ctx.drawImage(bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
     });
-  }
-  
-  // Draw game over screen
-  if (gameOver) {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(0, 0, canvas_width, canvas_height);
-    ctx.fillStyle = 'white';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Game Over!', canvas_width / 2, canvas_height / 2);
-    ctx.font = '24px Arial';
-    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
-  }
-  
-  // Draw win screen
-  if (gameWon) {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(0, 0, canvas_width, canvas_height);
-    ctx.fillStyle = 'white';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('You Won!', canvas_width / 2, canvas_height / 2);
-    ctx.font = '24px Arial';
-    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
-  }
+  });
 }
-
+ 
 function update() {
-  // Handle restart
-  if ((gameOver || gameWon) && keys['r']) {
-    resetGame();
-    return;
-  }
-  
-  if (gameOver || gameWon) return;
-  
-  // Update ship position with the correct speed
-  if (keys["ArrowLeft"] && ship.x > ship.width + 0) ship.x -= ship_speed;
-  if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship_speed;
-  if (keys["ArrowUp"] && ship.y > 0.6*canvas_height) ship.y -= ship_speed;
-  if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship_speed;
+  if (keys["ArrowLeft"] && ship.x  >  ship.width + 0 ) ship.x -= ship.speed;
+  if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship.speed;
+  if (keys["ArrowUp"] && ship.y > 0.6*canvas_height ) ship.y -= ship.speed;
+  if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship.speed;
   if (keys[" "] || keys["Spacebar"]) shoot();
-  
-  // Enemy shooting
-  enemyShoot();
-  
-  // Update bullet positions
   bullets.forEach(b => b.y -= b.speed);
-  
-  // Update enemy bullet positions
-  enemy_bullets.forEach(b => b.y += b.speed);
-  
-  // Check for bullet-enemy collisions
   for (let i = bullets.length - 1; i >= 0; i--) {
-    const bullet = bullets[i];
-    
-    if (bullet.y < 0) {
-      bullets.splice(i, 1);
-      continue;
-    }
-    
-    let hit = false;
-    for (let row = 0; row < enemiesRows; row++) {
-      for (let col = 0; col < enemiesCols; col++) {
-        const enemy = enemies[row][col];
-        if (enemy.alive && 
-            bullet.x < enemy.x + enemy_width &&
-            bullet.x + bullet_width > enemy.x &&
-            bullet.y < enemy.y + enemy_height &&
-            bullet.y + bullet_height > enemy.y) {
-          enemy.alive = false;
-          bullets.splice(i, 1);
-          
-          // Play explosion sound
-          explosionSound.currentTime = 0;
-          explosionSound.play();
-          
-          // Check if all enemies are dead
-          let allDead = true;
-          for (let r = 0; r < enemiesRows; r++) {
-            for (let c = 0; c < enemiesCols; c++) {
-              if (enemies[r][c].alive) {
-                allDead = false;
-                break;
-              }
-            }
-            if (!allDead) break;
-          }
-          if (allDead) {
-            gameWon = true;
-          }
-          hit = true;
-          break;
-        }
-      }
-      if (hit) break;
-    }
+    if (bullets[i].y < 0) bullets.splice(i, 1);
   }
 
-  // Check for enemy bullet-ship collisions
-  for (let i = enemy_bullets.length - 1; i >= 0; i--) {
-    const bullet = enemy_bullets[i];
-    
-    // Remove bullets that go off screen
-    if (bullet.y > canvas_height) {
-      enemy_bullets.splice(i, 1);
-      continue;
-    }
-    
-    // Check collision with ship
-    if (bullet.x < ship.x + ship.width &&
-        bullet.x + enemy_bullet_width > ship.x &&
-        bullet.y < ship.y + ship.height &&
-        bullet.y + enemy_bullet_height > ship.y) {
-      enemy_bullets.splice(i, 1);
-      ship.health--;
-      updateLivesDisplay();
-      
-      if (ship.health <= 0) {
-        gameOver = true;
-      }
-    }
-  }
 
-  // Update enemy movement and speed
+  //check if enemy got hit
   const now = Date.now();
   if(now - lastActionTime >= actionInterval && SpeedupCounter < 4){
     lastActionTime = now;
     enemy_speed = enemy_speed + 1.4; // increase speed every 5 seconds
     SpeedupCounter++;
+    console.log(enemy_speed);
   }
   
   if(mostLeftEnemy <= 0 || mostRightEnemy >= canvas_width - enemy_width){
     enemy_direction = -1 * enemy_direction; // reverse direction
-  }
-  
-  mostLeftEnemy = Infinity;
-  mostRightEnemy = -Infinity;
-  
-  for (let row = 0; row < enemiesRows; row++) {
-    for (let col = 0; col < enemiesCols; col++) {
-      const enemy = enemies[row][col];
+    };
+    mostLeftEnemy = Infinity; // x position of the leftmost enemy
+    mostRightEnemy = -Infinity; // x position of the rightmost enemy
+  enemies.forEach(row => {
+    row.forEach(enemy => {
       if (enemy.alive) {
         enemy.x += (enemy_speed * enemy_direction);
         if(enemy.x < mostLeftEnemy){
@@ -530,9 +380,9 @@ function update() {
           mostRightEnemy = enemy.x;
         }
       }
-    }
-  }
-}
+    });
+  });}
+
 
 function shoot() {
   if (canShoot) {
@@ -540,57 +390,4 @@ function shoot() {
     canShoot = false;
     setTimeout(() => canShoot = true, 300);
   }
-}
-
-function enemyShoot() {
-  if (canEnemyShoot) {
-    // Get all alive enemies into a flat array
-    const aliveEnemies = [];
-    for (let row = 0; row < enemiesRows; row++) {
-      for (let col = 0; col < enemiesCols; col++) {
-        if (enemies[row][col].alive) {
-          aliveEnemies.push(enemies[row][col]);
-        }
-      }
-    }
-
-    if (aliveEnemies.length > 0) {
-      // Choose a random alive enemy
-      const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
-      enemy_bullets.push({
-        x: randomEnemy.x + enemy_width / 2 - enemy_bullet_width / 2,
-        y: randomEnemy.y + enemy_height,
-        speed: enemy_bullet_speed
-      });
-      canEnemyShoot = false;
-      setTimeout(() => canEnemyShoot = true, 1000); // Enemy shoots every second
-    }
-  }
-}
-
-function resetGame() {
-  // Reset ship
-  ship.x = canvas_width / 2;
-  ship.y = canvas_height - 80;
-  ship.health = 3;
-  updateLivesDisplay();
-  
-  // Reset game state
-  gameOver = false;
-  gameWon = false;
-  gameStartTime = Date.now();  // Reset the timer
-  document.getElementById('timer-display').textContent = '0s';  // Reset timer display
-  
-  // Reset enemy movement variables
-  enemy_speed = 4;
-  SpeedupCounter = 0;
-  enemy_direction = 1;
-  lastActionTime = Date.now();
-  
-  // Clear bullets
-  bullets.length = 0;
-  enemy_bullets.length = 0;
-  
-  // Reset enemies
-  setupGame();
 }
