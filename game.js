@@ -302,7 +302,7 @@ document.getElementById("StartGameButton").addEventListener("click", () => {
 //   player = new Object();
 //   player.start = new Object(); //will hold the x,y cords of the line start
 //   player.end = new Object(); //will hold the x,y cords the the line end
-// }
+//}
 
 function loop(){
   draw()
