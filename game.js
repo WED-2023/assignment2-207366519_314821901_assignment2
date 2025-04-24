@@ -252,37 +252,37 @@ about_dialog.addEventListener('click', (event) => {
 
 
 
-//bullet vars
-const bullet_width = 25
-const bullet_height = 40
+
+
+
+//canvas vars
+const canvas = document.getElementById("theCanvas");
+const ctx = canvas.getContext('2d');
+const canvas_width = canvas.width
+const canvas_height = canvas.height
+const keys = {};
+document.addEventListener("keydown", e => keys[e.key] = true);
+document.addEventListener("keyup", e => delete keys[e.key]);
+
+//bullets vars
 const bullets = [];
-const bullet_speed = 2;
+let canShoot = true;
 const bulletImg = new Image();
 bulletImg.src = "bullet.png"
-let canShoot = true;
-
-
-//ship vars
-const ship = { x: canvas_width / 2, y: canvas_height - 80, width: 40, height: 60, speed: ship_speed};
-const shipImg = new Image();
-const ship_speed = 2
-shipImg.src = "rocket.png";
+const bullet_speed = 2;
 
 //enemies vars
 const enemies = [];
 const enemiesRows = 5;
 const enemiesCols = 4;
 
-//canva vars
-const canvas = document.getElementById("theCanvas");
-const ctx = canvas.getContext('2d');
-const canvas_width = canvas.width
-const canvas_height = canvas.height
+//ship vars
+const ship_speed = 2
+const ship = { x: canvas_width / 2, y: canvas_height - 80, width: 40, height: 60, speed: ship_speed};
+const shipImg = new Image();
+shipImg.src = "rocket.png";
 
 
-const keys = {};
-document.addEventListener("keydown", e => keys[e.key] = true);
-document.addEventListener("keyup", e => delete keys[e.key]);
 
 
 
@@ -292,6 +292,7 @@ document.getElementById("StartGameButton").addEventListener("click", () => {
   loop();
   document.getElementById("StartGameButton").disabled = true;
 });
+
 // function setupGame(){
 //   // document.addEventListener(BeforeUnloadEvent,stoptimer)...BackToHomePage.
 
@@ -310,7 +311,7 @@ function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
   ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
   bullets.forEach(bullet => {
-    ctx.drawImage(bulletImg,bullet.x + bullet_width / 2,bullet.y,bullet_width,bullet_height)
+    ctx.drawImage(bulletImg,bullet.x,bullet.y,30,50)
   });
 }
  
@@ -328,7 +329,7 @@ function update() {
 
 function shoot() {
   if (canShoot) {
-    bullets.push({ x: ship.x ,y: ship.y ,speed: bullet_speed });
+    bullets.push({ x: ship.x, y: ship.y, speed: bullet_speed });
     canShoot = false;
     setTimeout(() => canShoot = true, 300);
   }
