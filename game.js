@@ -266,16 +266,17 @@ const bullets = [];
 let canShoot = true;
 const bulletImg = new Image();
 bulletImg.src = "bullet.png"
-const bullet_speed = 4;
+const bullet_speed = 6;
 const bullet_width = 25;
 const bullet_height = 30;
 
 //enemy bullets vars
 const enemy_bullets = [];
 let canEnemyShoot = true;
-const enemy_bullet_speed = 4;
+const enemy_bullet_speed = 6;
 const enemy_bullet_width = 25;
 const enemy_bullet_height = 30;
+const shootThreshold = canvas_height * 0.75; // 75% of canvas height
 
 //enemies vars
 const enemies = [];
@@ -543,7 +544,11 @@ function shoot() {
 }
 
 function enemyShoot() {
-  if (canEnemyShoot) {
+  // Only shoot if we can and there are no active bullets or the last bullet has passed 75% of canvas
+  const canShootNew = enemy_bullets.length === 0 || 
+                     enemy_bullets[enemy_bullets.length - 1].y > shootThreshold;
+                     
+  if (canEnemyShoot && canShootNew) {
     // Get all alive enemies into a flat array
     const aliveEnemies = [];
     for (let row = 0; row < enemiesRows; row++) {
@@ -563,7 +568,7 @@ function enemyShoot() {
         speed: enemy_bullet_speed
       });
       canEnemyShoot = false;
-      setTimeout(() => canEnemyShoot = true, 1000); // Enemy shoots every second
+      setTimeout(() => canEnemyShoot = true, 1000); // Reset shooting cooldown
     }
   }
 }
@@ -582,7 +587,7 @@ function resetGame() {
   document.getElementById('timer-display').textContent = '0s';  // Reset timer display
   
   // Reset enemy movement variables
-  enemy_speed = 4;
+  enemy_speed = 5;
   SpeedupCounter = 0;
   enemy_direction = 1;
   lastActionTime = Date.now();
