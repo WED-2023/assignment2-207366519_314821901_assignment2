@@ -288,6 +288,13 @@ const enemy_height = 30
 const enemyImg = new Image();
 enemyImg.src = "enemy.png"
 
+// Explosion vars
+const explosions = [];
+const explosionImg = new Image();
+explosionImg.src = "YQDj.gif";
+const explosion_width = 40;  
+const explosion_height = 30;
+
 //ship vars
 const ship_speed = 2
 const ship = { 
@@ -356,6 +363,15 @@ function draw(){
     });
     enemy_bullets.forEach(bullet => {
       ctx.drawImage(bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
+    });
+    
+    // Draw explosions
+    explosions.forEach((explosion, index) => {
+      ctx.drawImage(explosionImg, explosion.x, explosion.y, explosion_width, explosion_height);
+      explosion.duration--;
+      if (explosion.duration <= 0) {
+        explosions.splice(index, 1);
+      }
     });
   }
   
@@ -426,6 +442,13 @@ function update() {
           bullet.y + bullet_height > enemy.y) {
         enemy.alive = false;
         bullets.splice(i, 1);
+        
+        // Add explosion
+        explosions.push({
+          x: enemy.x + (enemy.width - explosion_width) / 2,
+          y: enemy.y + (enemy.height - explosion_height) / 2,
+          duration: 20  // Number of frames the explosion will last
+        });
         
         // Check if all enemies are dead
         if (enemies.every(enemy => !enemy.alive)) {
@@ -503,4 +526,6 @@ function resetGame() {
   
   // Reset enemies
   enemies.forEach(enemy => enemy.alive = true);
+  
+  explosions.length = 0;  // Clear any remaining explosions
 }
