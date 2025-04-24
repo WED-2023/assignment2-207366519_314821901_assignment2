@@ -347,3 +347,40 @@ a {
     box-shadow: 0 0 15px var(--background-color); /* Glowing effect with the background color */
     display: flex;  /* Flexbox for content alignment inside the canvas */
   }
+
+#game-stats {
+  direction: ltr;
+  margin-bottom: 20px;
+  color: white;
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.2em;
+  text-align: left;
+  padding: 10px;
+  border: 2px solid var(--background-color);
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 10px var(--background-color);
+  width: fit-content;
+}
+
+#lives-container, #timer-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  direction: ltr;
+}
+
+#timer-container {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--background-color);
+}
+
+.stats-label {
+  color: var(--background-color);
+}
+
+#lives-display, #timer-display {
+  font-size: 1.2em;
+  color: white;
+}
