@@ -294,14 +294,23 @@ const actionInterval = 5000;
 let SpeedupCounter = 0;
 let enemy_direction = 1; // 1 for right, -1 for left
 
-// Remove explosion vars and add explosion sound
+// Sound effects
 const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
+const shipHitSound = new Audio('8-bit-video-game-fail-version-2-145478.mp3');
 
 //ship vars
 const ship_speed = 7  // Increased from 2 to 5 for better responsiveness
+const SHIP_START_Y = canvas_height - 80;
+function getRandomStartX() {
+  // Ensure ship stays within canvas bounds
+  const minX = ship_speed + 40; // Minimum distance from left edge
+  const maxX = canvas_width - 40 - ship_speed; // Maximum distance from right edge
+  return Math.floor(Math.random() * (maxX - minX)) + minX;
+}
+
 const ship = { 
-  x: canvas_width / 2, 
-  y: canvas_height - 80, 
+  x: getRandomStartX(), 
+  y: SHIP_START_Y, 
   width: 40, 
   height: 60, 
   speed: ship_speed,
@@ -499,6 +508,12 @@ function update() {
       ship.health--;
       updateLivesDisplay();
       
+      // Play hit sound and reset ship position with random X
+      shipHitSound.currentTime = 0;
+      shipHitSound.play();
+      ship.x = getRandomStartX();
+      ship.y = SHIP_START_Y;
+      
       if (ship.health <= 0) {
         gameOver = true;
       }
@@ -574,9 +589,9 @@ function enemyShoot() {
 }
 
 function resetGame() {
-  // Reset ship
-  ship.x = canvas_width / 2;
-  ship.y = canvas_height - 80;
+  // Reset ship with random X position
+  ship.x = getRandomStartX();
+  ship.y = SHIP_START_Y;
   ship.health = 3;
   updateLivesDisplay();
   
