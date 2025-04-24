@@ -270,6 +270,8 @@ let canShoot = true;
 const bulletImg = new Image();
 bulletImg.src = "bullet.png"
 const bullet_speed = 2;
+const bullet_width = 25;
+const bullet_height = 30;
 
 //enemies vars
 const enemies = [];
@@ -311,7 +313,7 @@ function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
   ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
   bullets.forEach(bullet => {
-    ctx.drawImage(bulletImg,bullet.x,bullet.y,30,50)
+    ctx.drawImage(bulletImg,bullet.x,bullet.y,bullet_width,bullet_height)
   });
 }
  
@@ -329,7 +331,7 @@ function update() {
 
 function shoot() {
   if (canShoot) {
-    bullets.push({ x: ship.x, y: ship.y, speed: bullet_speed });
+    bullets.push({ x: ship.x - bullet_width / 2, y: ship.y - bullet_height, speed: bullet_speed });
     canShoot = false;
     setTimeout(() => canShoot = true, 300);
   }
