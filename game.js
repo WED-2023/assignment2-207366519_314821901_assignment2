@@ -1,5 +1,6 @@
 var registerdUsers = [{ userName: "p", password: "testuser" }];
 let currentUser = null;
+let wasLoginVisible = false;
 
  
 function showScreen(screenId) {
@@ -119,7 +120,7 @@ const onLogInClick = () => {
     if (user) {
       currentUser = { username: user.userName, scores: [] };
       error.textContent = "";
-      showScreen('game');
+      showScreen('configuration');
     } else {
       error.textContent = "Invalid username or password.";
     }
@@ -299,7 +300,7 @@ const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
 const shipHitSound = new Audio('8-bit-video-game-fail-version-2-145478.mp3');
 
 //ship vars
-const ship_speed = 7  // Increased from 2 to 5 for better responsiveness
+const ship_speed = 7 // speed of the ship  
 const SHIP_START_Y = canvas_height - 80;
 function getRandomStartX() {
   // Ensure ship stays within canvas bounds
@@ -307,7 +308,6 @@ function getRandomStartX() {
   const maxX = canvas_width - 40 - ship_speed; // Maximum distance from right edge
   return Math.floor(Math.random() * (maxX - minX)) + minX;
 }
-
 const ship = { 
   x: getRandomStartX(), 
   y: SHIP_START_Y, 
@@ -319,16 +319,24 @@ const ship = {
 const shipImg = new Image();
 shipImg.src = "rocket.png";
 
+
 // Game state
 let gameOver = false;
 let gameWon = false;
 let gameStartTime = 0;
+let score = 0
 
+// Function to update lives display   
 function updateLivesDisplay() {
   const livesDisplay = document.getElementById('lives-display');
-  livesDisplay.textContent = ship.health;
+  livesDisplay.textContent =ship.health;
+}
+function updateScoreDisplay() {
+  const scoreDisplay = document.getElementById('score-display');
+  scoreDisplay.textContent = score;
 }
 
+//Game timer function
 function updateTimer() {
   if (!gameOver && !gameWon) {
     const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
@@ -338,6 +346,14 @@ function updateTimer() {
 }
 
 document.getElementById("StartGameButton").addEventListener("click", () => {
+  const shootKey = document.getElementById("ShootKey").value;
+  const gameTime = parseInt(document.getElementById("TimeChoice").value);
+
+  if (gameTime < 2) {
+    alert("Please enter a valid game time (min 2 minutes).");
+    return;
+  }
+  showScreen('game');
   setupGame();
   resetGame();
   loop();
@@ -369,6 +385,8 @@ function loop(){
   update()
   requestAnimationFrame(loop);
 }
+
+
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
   
@@ -424,7 +442,7 @@ function update() {
     return;
   }
   
-  if (gameOver || gameWon) return;
+  // if (gameOver || gameWon) return;
   
   // Update ship position with the correct speed
   if (keys["ArrowLeft"] && ship.x > ship.width + 0) ship.x -= ship_speed;
@@ -462,7 +480,8 @@ function update() {
             bullet.y + bullet_height > enemy.y) {
           enemy.alive = false;
           bullets.splice(i, 1);
-          
+          score += 5 * row
+          updateScoreDisplay(); // update score display
           // Play explosion sound
           explosionSound.currentTime = 0;
           explosionSound.play();
@@ -530,19 +549,19 @@ function update() {
   
   if(mostLeftEnemy <= 0 || mostRightEnemy >= canvas_width - enemy_width){
     enemy_direction = -1 * enemy_direction; // reverse direction
-  }
-  
+  }  
   mostLeftEnemy = Infinity;
   mostRightEnemy = -Infinity;
-  
+
   for (let row = 0; row < enemiesRows; row++) {
     for (let col = 0; col < enemiesCols; col++) {
       const enemy = enemies[row][col];
       if (enemy.alive) {
         enemy.x += (enemy_speed * enemy_direction);
-        if(enemy.x < mostLeftEnemy){
+        if(enemy.x <= mostLeftEnemy){
           mostLeftEnemy = enemy.x;
-        }else if(enemy.x > mostRightEnemy){
+        }
+        if(enemy.x >= mostRightEnemy){
           mostRightEnemy = enemy.x;
         }
       }
@@ -594,7 +613,8 @@ function resetGame() {
   ship.y = SHIP_START_Y;
   ship.health = 3;
   updateLivesDisplay();
-  
+  score = 0;
+  updateScoreDisplay(); // Reset score display
   // Reset game state
   gameOver = false;
   gameWon = false;

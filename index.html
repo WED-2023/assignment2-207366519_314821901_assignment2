@@ -181,7 +181,37 @@
           </div>
         </form>
       </div> 
- 
+
+      <div id='configuration' class="content">
+        <h2>Configure Your Game</h2>
+        <label for="ShootKey">Choose Shooting Key</label>
+        <input
+        type="text"
+        id="ShootKey"
+        maxlength="1"
+        minlength="1"
+        required
+        placeholder=""
+      >        
+      <label for="TimeChoice">Set Your Game Time(Minimum 2 minutes)</label>
+        <input type="number" id="TimeChoice" min="2" placeholder="">
+        <div class="buttons">
+          <button id = "StartGameButton" class="buttons" >Start Game</button>
+        </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       <div id='game' class="content">
         <div id="game-stats">
@@ -193,14 +223,14 @@
                 <span class="stats-label">Remaining Lives:</span>
                 <span id="lives-display">3</span>
             </div>
+            <div id="score-container">
+                <span class="stats-label">Score:</span>
+                <span id="score-display">0</span>
+        </div>
         </div>
         <canvas id = "theCanvas" width = "1000" height = "450"></canvas>
-        <button id = "StartGameButton" class = "buttons" >Start Game</button>
      </div>
     
-
-
-
       <footer>
         <div id="authors">
           <p>
