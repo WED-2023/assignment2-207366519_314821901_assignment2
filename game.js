@@ -311,10 +311,19 @@ shipImg.src = "rocket.png";
 // Game state
 let gameOver = false;
 let gameWon = false;
+let gameStartTime = 0;
 
 function updateLivesDisplay() {
   const livesDisplay = document.getElementById('lives-display');
   livesDisplay.textContent = ship.health;
+}
+
+function updateTimer() {
+  if (!gameOver && !gameWon) {
+    const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
+    const timerDisplay = document.getElementById('timer-display');
+    timerDisplay.textContent = currentTime + 's';
+  }
 }
 
 document.getElementById("StartGameButton").addEventListener("click", () => {
@@ -353,6 +362,7 @@ function draw(){
   
   // Draw game elements if game is not over
   if (!gameOver && !gameWon) {
+    updateTimer();  // Update timer each frame
     ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
     bullets.forEach(bullet => {
       ctx.drawImage(bulletImg, bullet.x, bullet.y, bullet_width, bullet_height)
@@ -522,6 +532,8 @@ function resetGame() {
   // Reset game state
   gameOver = false;
   gameWon = false;
+  gameStartTime = Date.now();  // Reset the timer
+  document.getElementById('timer-display').textContent = '0s';  // Reset timer display
   
   // Clear bullets
   bullets.length = 0;

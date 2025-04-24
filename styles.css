@@ -349,7 +349,7 @@ a {
   }
 
 #game-stats {
-  direction: ltr;  /* Force Left-to-Right direction */
+  direction: ltr;
   margin-bottom: 20px;
   color: white;
   font-family: 'Press Start 2P', cursive;
@@ -363,18 +363,24 @@ a {
   width: fit-content;
 }
 
-#lives-container {
+#lives-container, #timer-container {
   display: flex;
   align-items: center;
   gap: 10px;
-  direction: ltr;  /* Ensure the content inside is also LTR */
+  direction: ltr;
+}
+
+#timer-container {
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--background-color);
 }
 
 .stats-label {
   color: var(--background-color);
 }
 
-#lives-display {
+#lives-display, #timer-display {
   font-size: 1.2em;
   color: white;
 }
