@@ -445,12 +445,12 @@ function drawScoreTable(title) {
   ctx.font = '24px Arial';
   const timePlayed = Math.floor((Date.now() - gameStartTime) / 1000);
   ctx.fillText(`Current Game Score: ${score}`, canvas_width / 2, scoreboardY + 100);
-  ctx.fillText(`Time Played: ${timePlayed}s`, canvas_width / 2, scoreboardY + 130);
-  ctx.fillText(`Enemies Defeated: ${score / 5}`, canvas_width / 2, scoreboardY + 160);
+  // ctx.fillText(`Time Played: ${timePlayed}s`, canvas_width / 2, scoreboardY + 130);
+  // ctx.fillText(`Enemies Defeated: ${score / 5}`, canvas_width / 2, scoreboardY + 160);
   
-  // Draw highest score
-  ctx.font = 'bold 24px Arial';
-  ctx.fillText(`Highest Score: ${highestScore}`, canvas_width / 2, scoreboardY + 200);
+  // // Draw highest score
+  // ctx.font = 'bold 24px Arial';
+  // ctx.fillText(`Highest Score: ${highestScore}`, canvas_width / 2, scoreboardY + 200);
   
   if (currentUser.scores.length > 0) {
     // Draw game history
@@ -458,11 +458,14 @@ function drawScoreTable(title) {
     ctx.fillText('Last Games History', canvas_width / 2, scoreboardY + 240);
     
     // Draw each game in history
+    console.log("Current User Scores: ", currentUser.scores);
+    console.log("Current User: ", currentUser);
     currentUser.scores.forEach((game, index) => {
       const yPos = scoreboardY + 270 + (index * 30);
       ctx.font = '16px Arial';
       ctx.fillText(
-        `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
+        // `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
+        `Game ${index + 1}: Score: ${game.score} `,
         canvas_width / 2,
         yPos
       );
