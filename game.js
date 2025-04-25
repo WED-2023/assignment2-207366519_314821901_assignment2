@@ -129,6 +129,7 @@ const onLogInClick = () => {
   
     if (user) {
       currentUser = { username: user.userName, scores: [] };
+      console.log("the bane of the current user is: ",currentUser);
       error.textContent = "";
       showScreen('configuration');
     } else {
@@ -423,8 +424,8 @@ function loop() {
 
 function drawScoreTable(title) {
   // Draw scoreboard background
-  const scoreboardWidth = 500; // Increased width to accommodate more information
-  const scoreboardHeight = 400; // Increased height to accommodate game history
+  const scoreboardWidth = 500;
+  const scoreboardHeight = 400;
   const scoreboardX = (canvas_width - scoreboardWidth) / 2;
   const scoreboardY = (canvas_height - scoreboardHeight) / 2;
   
@@ -451,26 +452,50 @@ function drawScoreTable(title) {
   ctx.font = 'bold 24px Arial';
   ctx.fillText(`Highest Score: ${highestScore}`, canvas_width / 2, scoreboardY + 200);
   
-  if (gameHistory.length > 0) {
-  // Draw game history
-  ctx.font = '20px Arial';
-  ctx.fillText('Last Games History', canvas_width / 2, scoreboardY + 240);
-  
-  // Draw each game in history
-  gameHistory.forEach((game, index) => {
-    const yPos = scoreboardY + 270 + (index * 30);
-    ctx.font = '16px Arial';
-    ctx.fillText(
-      `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
-      canvas_width / 2,
-      yPos
-    );
-  });
+  if (currentUser.scores.length > 0) {
+    // Draw game history
+    ctx.font = '20px Arial';
+    ctx.fillText('Last Games History', canvas_width / 2, scoreboardY + 240);
+    
+    // Draw each game in history
+    currentUser.scores.forEach((game, index) => {
+      const yPos = scoreboardY + 270 + (index * 30);
+      ctx.font = '16px Arial';
+      ctx.fillText(
+        `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
+        canvas_width / 2,
+        yPos
+      );
+    });
   }
+
+  // Add restart button
+  const buttonWidth = 150;
+  const buttonHeight = 40;
+  const buttonX = (canvas_width - buttonWidth) / 2;
+  const buttonY = scoreboardY + scoreboardHeight - 60;
+
+  // Draw button background
+  ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
+  ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
   
-  // Draw restart instruction
-  ctx.font = '20px Arial';
-  ctx.fillText('Press R to Restart', canvas_width / 2, scoreboardY + 380);
+  // Draw button border
+  ctx.strokeStyle = '#00ffff';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+  
+  // Draw button text
+  ctx.fillStyle = 'white';
+  ctx.font = '20px "Press Start 2P"';
+  ctx.fillText('Restart', canvas_width / 2, buttonY + 28);
+
+  // Store button coordinates for click handling
+  window.restartButton = {
+    x: buttonX,
+    y: buttonY,
+    width: buttonWidth,
+    height: buttonHeight
+  };
 }
 
 function draw(){
@@ -697,9 +722,9 @@ function resetGame() {
       date: new Date().toLocaleString()
     };
     
-    gameHistory.unshift(gameResult); // Add to beginning of array
-    if (gameHistory.length > 5) {
-      gameHistory.pop(); // Keep only last 5 games
+    currentUser.scores.unshift(gameResult); // Add to beginning of array
+    if (currentUser.scores.length > 5) {
+      currentUser.scores.pop(); // Keep only last 5 games
     }
     
     // Update highest score
@@ -736,14 +761,6 @@ function resetGame() {
   setupGame(); // Build new enemies
   isCurrentlyGameRunning = true; // Set to true AFTER setup
 }
-document.addEventListener("keydown", function (e) {
-  if ((gameOver || gameWon) && e.key.toLowerCase() === 'r') {
-    resetGame();
-    backgroundMusic.currentTime = 0;
-    backgroundMusic.play();
-    loop(); // Restart game loop properly
-  }
-});
 
 function stopGame() {
   if (isCurrentlyGameRunning) {
@@ -755,3 +772,23 @@ function stopGame() {
     enemy_bullets.length = 0;
   }
 }
+
+// Add click handler for the restart button
+canvas.addEventListener('click', function(event) {
+  if (!gameOver && !gameWon) return;
+
+  const rect = canvas.getBoundingClientRect();
+  const x = event.clientX - rect.left;
+  const y = event.clientY - rect.top;
+  
+  if (window.restartButton) {
+    const btn = window.restartButton;
+    if (x >= btn.x && x <= btn.x + btn.width &&
+        y >= btn.y && y <= btn.y + btn.height) {
+      resetGame();
+      backgroundMusic.currentTime = 0;
+      backgroundMusic.play();
+      loop();
+    }
+  }
+});
