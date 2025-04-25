@@ -255,6 +255,8 @@ about_dialog.addEventListener('click', (event) => {
 
 
 
+
+
 //canvas vars
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext('2d');
@@ -327,6 +329,8 @@ let gameOver = false;
 let gameWon = false;
 let gameStartTime = 0;
 let score = 0
+let shootkey;
+let gameTime; // Game time in seconds
 
 // Function to update lives display   
 function updateLivesDisplay() {
@@ -340,27 +344,40 @@ function updateScoreDisplay() {
 
 //Game timer function
 function updateTimer() {
+  const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
   if (!gameOver && !gameWon) {
-    const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
     const timerDisplay = document.getElementById('timer-display');
     timerDisplay.textContent = currentTime + 's';
   }
+  if (gameTime <= currentTime) {
+    gameOver = true;
+    return;
+  }
+}
+function checkShootKey() {
+  shootKey = document.getElementById("ShootKey").value;
+  if (shootKey === " " || /^[a-zA-Z]$/.test(shootKey)) {
+    return true;
+  }
+  return false;
 }
 
-document.getElementById("StartGameButton").addEventListener("click", () => {
-  const shootKey = document.getElementById("ShootKey").value;
-  const gameTime = parseInt(document.getElementById("TimeChoice").value);
-
+function StartGameAfterConfig() {
+  gameTime = parseInt(document.getElementById("TimeChoice").value);
+  if(!checkShootKey()){
+    alert("Please enter a valid key (letter or space).");
+    return;
+  }
   if (gameTime < 2) {
     alert("Please enter a valid game time (min 2 minutes).");
     return;
   }
+  gameTime = gameTime * 60 ; // Convert to seconds
   showScreen('game');
   setupGame();
   resetGame();
   loop();
-  document.getElementById("StartGameButton").disabled = true;
-});
+}
 
 function setupGame() {
   const spacingX = 60; // horizontal spacing between enemies
@@ -451,7 +468,7 @@ function update() {
   if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship_speed;
   if (keys["ArrowUp"] && ship.y > 0.6*canvas_height) ship.y -= ship_speed;
   if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship_speed;
-  if (keys[" "] || keys["Spacebar"]) shoot();
+  if (keys[shootKey]) shoot();
   
   // Enemy shooting
   enemyShoot();
