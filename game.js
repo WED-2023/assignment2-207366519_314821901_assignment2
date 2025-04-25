@@ -299,7 +299,9 @@ let enemy_direction = 1; // 1 for right, -1 for left
 
 // Sound effects
 const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
-const shipHitSound = new Audio('8-bit-video-game-fail-version-2-145478.mp3');
+const shipHitSound = new Audio('heartbeat.mp3');
+const backgroundMusic = new Audio('game_sound_background.mp3');
+backgroundMusic.loop = true; // Make the music loop continuously
 
 //ship vars
 const ship_speed = 7 // speed of the ship  
@@ -358,6 +360,7 @@ document.getElementById("StartGameButton").addEventListener("click", () => {
   showScreen('game');
   setupGame();
   resetGame();
+  backgroundMusic.play(); // Start background music
   loop();
   document.getElementById("StartGameButton").disabled = true;
 });
@@ -441,6 +444,8 @@ function update() {
   // Handle restart
   if ((gameOver || gameWon) && keys['r']) {
     resetGame();
+    backgroundMusic.currentTime = 0; // Reset music to beginning
+    backgroundMusic.play(); // Start music again
     return;
   }
   
@@ -501,6 +506,8 @@ function update() {
           }
           if (allDead) {
             gameWon = true;
+            backgroundMusic.pause(); // Stop music when game won
+            backgroundMusic.currentTime = 0; // Reset music to beginning
           }
           hit = true;
           break;
@@ -537,6 +544,9 @@ function update() {
       
       if (ship.health <= 0) {
         gameOver = true;
+        backgroundMusic.pause();
+        shipHitSound.pause(); // Stop music when game over
+        backgroundMusic.currentTime = 0; // Reset music to beginning
       }
     }
   }
@@ -617,6 +627,7 @@ function resetGame() {
   updateLivesDisplay();
   score = 0;
   updateScoreDisplay(); // Reset score display
+  
   // Reset game state
   gameOver = false;
   gameWon = false;
