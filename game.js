@@ -15,6 +15,7 @@ function showScreen(screenId) {
       resetRegistrationForm();
     }
     if (wasLoginVisible && screenId !== 'login') {
+        wasLoginVisible = false;
         resetLoginForm();
       }
   }
@@ -109,6 +110,7 @@ const checkDate = () => {
 };
 
 const onLogInClick = () => {
+    wasLoginVisible = true;
     const userName = document.querySelector('#logInUsername').value;
     const password = document.querySelector('#logInPassword').value;
     const error = document.querySelector('#logInError');
