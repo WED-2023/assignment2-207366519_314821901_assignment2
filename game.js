@@ -10,6 +10,11 @@ function showScreen(screenId) {
     const currentRegisterScreen = document.querySelector('#register');
     const wasRegisterVisible = currentRegisterScreen.classList.contains('active');
   
+    // Stop the game if navigating away from game screen
+    if (screenId === 'welcome' && isCurrentlyGameRunning) {
+      stopGame();
+    }
+
     const screens = document.querySelectorAll('.content');
     screens.forEach(screen => screen.classList.remove('active'));
     document.getElementById(screenId).classList.add('active');
@@ -20,8 +25,8 @@ function showScreen(screenId) {
     if (wasLoginVisible && screenId !== 'login') {
         wasLoginVisible = false;
         resetLoginForm();
-      }
-  }
+    }
+}
   
 
 
@@ -739,3 +744,14 @@ document.addEventListener("keydown", function (e) {
     loop(); // Restart game loop properly
   }
 });
+
+function stopGame() {
+  if (isCurrentlyGameRunning) {
+    isCurrentlyGameRunning = false;
+    backgroundMusic.pause();
+    backgroundMusic.currentTime = 0;
+    // Clear game elements
+    bullets.length = 0;
+    enemy_bullets.length = 0;
+  }
+}
