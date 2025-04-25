@@ -2,7 +2,10 @@ var registerdUsers = [{ userName: "p", password: "testuser" }];
 let currentUser = null;
 let wasLoginVisible = false;
 
- 
+// Game history tracking
+let gameHistory = [];
+let highestScore = 0;
+
 function showScreen(screenId) {
     const currentRegisterScreen = document.querySelector('#register');
     const wasRegisterVisible = currentRegisterScreen.classList.contains('active');
@@ -411,7 +414,57 @@ function loop() {
   }
 }
 
-
+function drawScoreTable(title) {
+  // Draw scoreboard background
+  const scoreboardWidth = 500; // Increased width to accommodate more information
+  const scoreboardHeight = 400; // Increased height to accommodate game history
+  const scoreboardX = (canvas_width - scoreboardWidth) / 2;
+  const scoreboardY = (canvas_height - scoreboardHeight) / 2;
+  
+  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+  ctx.strokeStyle = 'white';
+  ctx.lineWidth = 2;
+  ctx.fillRect(scoreboardX, scoreboardY, scoreboardWidth, scoreboardHeight);
+  ctx.strokeRect(scoreboardX, scoreboardY, scoreboardWidth, scoreboardHeight);
+  
+  // Draw title
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 36px Arial';
+  ctx.textAlign = 'center';
+  ctx.fillText(title, canvas_width / 2, scoreboardY + 50);
+  
+  // Draw current game stats
+  ctx.font = '24px Arial';
+  const timePlayed = Math.floor((Date.now() - gameStartTime) / 1000);
+  ctx.fillText(`Current Game Score: ${score}`, canvas_width / 2, scoreboardY + 100);
+  ctx.fillText(`Time Played: ${timePlayed}s`, canvas_width / 2, scoreboardY + 130);
+  ctx.fillText(`Enemies Defeated: ${score / 5}`, canvas_width / 2, scoreboardY + 160);
+  
+  // Draw highest score
+  ctx.font = 'bold 24px Arial';
+  ctx.fillText(`Highest Score: ${highestScore}`, canvas_width / 2, scoreboardY + 200);
+  
+  if (gameHistory.length > 0) {
+  // Draw game history
+  ctx.font = '20px Arial';
+  ctx.fillText('Last Games History', canvas_width / 2, scoreboardY + 240);
+  
+  // Draw each game in history
+  gameHistory.forEach((game, index) => {
+    const yPos = scoreboardY + 270 + (index * 30);
+    ctx.font = '16px Arial';
+    ctx.fillText(
+      `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
+      canvas_width / 2,
+      yPos
+    );
+  });
+  }
+  
+  // Draw restart instruction
+  ctx.font = '20px Arial';
+  ctx.fillText('Press R to Restart', canvas_width / 2, scoreboardY + 380);
+}
 
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
@@ -438,16 +491,10 @@ function draw(){
 
   // Draw game over screen
   if (gameOver) {
-    console.log("game over");
     isCurrentlyGameRunning=false;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas_width, canvas_height);
-    ctx.fillStyle = 'white';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('Game Over!', canvas_width / 2, canvas_height / 2);
-    ctx.font = '24px Arial';
-    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
+    drawScoreTable('Game Over');
   }
   
   // Draw win screen
@@ -455,12 +502,7 @@ function draw(){
     isCurrentlyGameRunning=false;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas_width, canvas_height);
-    ctx.fillStyle = 'white';
-    ctx.font = '48px Arial';
-    ctx.textAlign = 'center';
-    ctx.fillText('You Won!', canvas_width / 2, canvas_height / 2);
-    ctx.font = '24px Arial';
-    ctx.fillText('Press R to Restart', canvas_width / 2, canvas_height / 2 + 40);
+    drawScoreTable('Victory');
   }
 }
 
@@ -639,6 +681,26 @@ function enemyShoot() {
 }
 
 function resetGame() {
+  // Store game history if game ended
+  if (gameOver || gameWon) {
+    const gameResult = {
+      score: score,
+      time: Math.floor((Date.now() - gameStartTime) / 1000),
+      enemiesDefeated: score / 5,
+      date: new Date().toLocaleString()
+    };
+    
+    gameHistory.unshift(gameResult); // Add to beginning of array
+    if (gameHistory.length > 5) {
+      gameHistory.pop(); // Keep only last 5 games
+    }
+    
+    // Update highest score
+    if (score > highestScore) {
+      highestScore = score;
+    }
+  }
+
   // Reset ship
   ship.x = getRandomStartX();
   ship.y = SHIP_START_Y;
