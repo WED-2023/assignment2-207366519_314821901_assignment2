@@ -298,7 +298,7 @@ let lastActionTime = Date.now();
 const actionInterval = 5000;
 let SpeedupCounter = 0;
 let enemy_direction = 1; // 1 for right, -1 for left
-
+let isCurrentlyGameRunning=false;
 // Sound effects
 const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
 const shipHitSound = new Audio('heartbeat.mp3');
@@ -366,7 +366,7 @@ function checkShootKey() {
 
 function StartGameAfterConfig() {
   gameTime = parseInt(document.getElementById("TimeChoice").value);
-  if(!checkShootKey()){
+  if (!checkShootKey()) {
     alert("Please enter a valid key (letter or space).");
     return;
   }
@@ -374,15 +374,16 @@ function StartGameAfterConfig() {
     alert("Please enter a valid game time (min 2 minutes).");
     return;
   }
-  gameTime = gameTime * 60 ; // Convert to seconds
+  gameTime = gameTime * 60; // Convert to seconds
   showScreen('game');
-  setupGame();
-  resetGame();
+  resetGame(); // Only resetGame here (don't call setupGame again)
   backgroundMusic.play(); // Start background music
-  loop();
+  loop(); // Start the game loop
 }
 
+
 function setupGame() {
+  isCurrentlyGameRunning=true;
   const spacingX = 60; // horizontal spacing between enemies
   const spacingY = 50; // vertical spacing between enemies
   const startX = 50;   // starting x position
@@ -402,11 +403,14 @@ function setupGame() {
   mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x; // x position of the rightmost enemy
 }
 
-function loop(){
-  draw()
-  update()
-  requestAnimationFrame(loop);
+function loop() {
+  if (isCurrentlyGameRunning) {
+    draw();
+    update();
+    requestAnimationFrame(loop);
+  }
 }
+
 
 
 function draw(){
@@ -431,9 +435,11 @@ function draw(){
       ctx.drawImage(bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
     });
   }
-  
+
   // Draw game over screen
   if (gameOver) {
+    console.log("game over");
+    isCurrentlyGameRunning=false;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas_width, canvas_height);
     ctx.fillStyle = 'white';
@@ -446,6 +452,7 @@ function draw(){
   
   // Draw win screen
   if (gameWon) {
+    isCurrentlyGameRunning=false;
     ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
     ctx.fillRect(0, 0, canvas_width, canvas_height);
     ctx.fillStyle = 'white';
@@ -459,12 +466,7 @@ function draw(){
 
 function update() {
   // Handle restart
-  if ((gameOver || gameWon) && keys['r']) {
-    resetGame();
-    backgroundMusic.currentTime = 0; // Reset music to beginning
-    backgroundMusic.play(); // Start music again
-    return;
-  }
+
   
   // if (gameOver || gameWon) return;
   
@@ -637,30 +639,39 @@ function enemyShoot() {
 }
 
 function resetGame() {
-  // Reset ship with random X position
+  // Reset ship
   ship.x = getRandomStartX();
   ship.y = SHIP_START_Y;
   ship.health = 3;
   updateLivesDisplay();
+  
+  // Reset score
   score = 0;
-  updateScoreDisplay(); // Reset score display
+  updateScoreDisplay();
   
   // Reset game state
   gameOver = false;
   gameWon = false;
-  gameStartTime = Date.now();  // Reset the timer
-  document.getElementById('timer-display').textContent = '0s';  // Reset timer display
+  gameStartTime = Date.now(); 
+  document.getElementById('timer-display').textContent = '0s';
   
-  // Reset enemy movement variables
+  // Reset enemies
   enemy_speed = 5;
   SpeedupCounter = 0;
   enemy_direction = 1;
   lastActionTime = Date.now();
   
-  // Clear bullets
   bullets.length = 0;
   enemy_bullets.length = 0;
   
-  // Reset enemies
-  setupGame();
+  setupGame(); // Build new enemies
+  isCurrentlyGameRunning = true; // Set to true AFTER setup
 }
+document.addEventListener("keydown", function (e) {
+  if ((gameOver || gameWon) && e.key.toLowerCase() === 'r') {
+    resetGame();
+    backgroundMusic.currentTime = 0;
+    backgroundMusic.play();
+    loop(); // Restart game loop properly
+  }
+});
