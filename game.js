@@ -285,6 +285,8 @@ const enemy_bullet_speed = 6;
 const enemy_bullet_width = 25;
 const enemy_bullet_height = 30;
 const shootThreshold = canvas_height * 0.75; // 75% of canvas height
+const enemy_bulletImg = new Image();
+enemy_bulletImg.src = "enemy_bullet.png"
 
 //enemies vars
 const enemies = [];
@@ -485,7 +487,7 @@ function draw(){
       }
     }
     enemy_bullets.forEach(bullet => {
-      ctx.drawImage(bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
+      ctx.drawImage(enemy_bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
     });
   }
 
