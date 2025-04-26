@@ -1,3 +1,4 @@
+@media screen and (min-width: 1366px) and (min-height: 768px) {
 :root {
   --background-color: #00ffff;
 }
@@ -9,9 +10,9 @@ body {
   font-size: 1em;
   border: var(--background-color);
   display: flex;
-  justify-content: center;  /* Center horizontally */
-  align-items: center;      /* Center vertically */
-  height: 100vh;            /* Full viewport height */
+  justify-content: center;  
+  align-items: center;      
+  height: 100vh;            
 }
 
 
@@ -32,19 +33,7 @@ body {
     object-fit: cover; 
 }
 
-  menu {
-    background-color: #e0e0e0;
-    padding: 10px;
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-  }
 
-menu button {
-  padding: 10px 20px;
-  cursor: pointer;
-  font-weight: bold;
-}
 
   .content {
     display: none;
@@ -68,12 +57,7 @@ menu button {
   }
   
 
-  #about {
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 10px; 
-  }
+ 
   
   .buttons {
     margin-top: 10px;
@@ -293,14 +277,14 @@ a {
   #welcome.content.active {
     display: flex;
     flex-direction: column;
-    justify-content: flex-start; /* Align content to the top */
+    justify-content: flex-start; 
     align-items: center;
     text-align: center;
     font-family: 'Press Start 2P', cursive;
     color: #ffffff;
     font-size: 1.4em;
-    height: 40vh; /* Adjust height if needed */
-    margin-top: 50px; /* Add space from the top */
+    height: 40vh; 
+    margin-top: 50px; 
   }
   #authors {
     font-size: 12px;
@@ -329,26 +313,35 @@ a {
     box-shadow: 0 0 10px var(--background-color);
     color: white;
   }
+  #aboutModal button {
+    position: absolute;
+    top: 10px; 
+    right: 10px; 
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
 
-  #about {
+  menu {
     position: fixed; 
     top: 0;
     left: 0;
-    margin: 10px; 
+    margin: 10px;  
   }
   
   #game {
     justify-content: center;
     align-items: center;
-    margin-top: 80px;
-    margin-right:280px;
+    margin-bottom: auto;
   }
   
   #theCanvas {
     background-color: transparent;
-    border: 5px solid var(--background-color); /* Border with width and style */
-    box-shadow: 0 0 15px var(--background-color); /* Glowing effect with the background color */
-    display: flex;  /* Flexbox for content alignment inside the canvas */
+    border: 5px solid var(--background-color); 
+    box-shadow: 0 0 15px var(--background-color); 
+    display: flex; 
   }
 
 #game-stats {
@@ -394,8 +387,8 @@ a {
 
 #configuration {
   display: flex;
-  flex-direction: column;    /* Stack elements vertically */
-  align-items: center;       /* Center content horizontally */
+  flex-direction: column;    
+  align-items: center;       
   gap: 20px;
   max-width: 500px;
   padding: 20px;
@@ -406,17 +399,17 @@ a {
   box-shadow: 0 0 10px var(--background-color);
 }
 #configuration {
-  display: none; /* Hide the configuration screen by default */
+  display: none; 
 }
 
 #configuration.active {
-  display: flex; /* Show the configuration screen when it has the "active" class */
+  display: flex; 
 }
 #configuration h2 {
   font-size: 1.5em;
-  color: var(--background-color);  /* Assuming you have a variable for color */
+  color: var(--background-color);  
   margin-bottom: 20px;
-  text-align: center; /* This ensures the text is centered inside the h2 */
+  text-align: center; 
 }
 #configuration label {
   font-size: 1.1em;
@@ -426,12 +419,34 @@ a {
 #configuration input{
   width: 100%;
   padding: 10px;
-  border: 2px solid var(--background-color); /* Border with width and style */
-  border-radius: 5px; /* Rounded corners */
-  background-color: transparent; /* Transparent background */
-  color: white; /* Text color */
-  font-size: 1.2em; /* Font size */
-  box-shadow: 0 0 10px var(--background-color); /* Glowing effect with the background color */
-  margin-top: 5px; /* Space between label and input */
+  border: 2px solid var(--background-color);
+  border-radius: 5px;
+  background-color: transparent;
+  color: white;
+  font-size: 1.2em;
+  box-shadow: 0 0 10px var(--background-color); 
+  margin-top: 5px; 
   margin-bottom: 10px;
+}
+
+#game.content.active{
+  margin-top: 15px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
 }
