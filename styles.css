@@ -33,7 +33,7 @@ body {
     object-fit: cover; 
 }
 
-  menu {
+  /* menu {
     background-color: #e0e0e0;
     padding: 10px;
     display: flex;
@@ -45,7 +45,7 @@ menu button {
   padding: 10px 20px;
   cursor: pointer;
   font-weight: bold;
-}
+} */
 
   .content {
     display: none;
@@ -69,12 +69,12 @@ menu button {
   }
   
 
-  #about {
+  /* #about {
     position: fixed;
     top: 0;
     left: 0;
     margin: 10px; 
-  }
+  } */
   
   .buttons {
     margin-top: 10px;
@@ -331,11 +331,11 @@ a {
     color: white;
   }
 
-  #about {
+  menu {
     position: fixed; 
     top: 0;
     left: 0;
-    margin: 10px; 
+    margin: 10px;  
   }
   
   #game {
@@ -442,4 +442,18 @@ a {
   display: flex;
   flex-direction: column;
 }
+
+header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
 }

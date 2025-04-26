@@ -14,23 +14,23 @@
             Your browser does not support the video tag.
         </video>
     </div>
-
-    
-
-    
       <div id="welcome" class="content active">
-        <h2>Welcome to StarQuest</h2>
+        <header>
+          <img src="logo1.png" alt="Game Logo" class="logo">
+          <h2>Welcome to Lior&Asaf<p>Invaders game</p>
+        </header>
         <div class="buttons">
           <button onclick="showScreen('register')">Sign Up</button>
           <button onclick="showScreen('login')">Sign In</button>
         </div>
       </div>
 
-      <div id="about" class="buttons">
-        <button onclick="document.getElementById('aboutModal').showModal()">About</button>
-        <!-- <button onclick="showScreen('welcome')">Home</button> -->
-        <button onclick="homefunction()">Home</button>
-      </div>
+      <menu>
+        <div id="about" class="buttons">
+          <button onclick="document.getElementById('aboutModal').showModal()">About</button>
+          <button onclick="homefunction()">Home</button>
+        </div>
+      </menu>
 
       <dialog id="aboutModal">
         <p>
@@ -40,7 +40,7 @@
 
       </dialog>
 
-    
+    <content>
       <div id="register" class="content">
         <h2>Sign up</h2>
         <form id="registrationForm" onsubmit="onSignUpClick(event)" autocomplete="off" class="form">
@@ -199,20 +199,6 @@
           <button id="StartGameButton" class="buttons" onclick="StartGameAfterConfig()">Start Game</button>
         </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
       <div id='game' class="content">
         <div id="game-stats">
             <div id="timer-container">
@@ -233,10 +219,8 @@
           <button id="new-game-button" class="buttons">New Game</button>
         </div>
      </div>
-
-
+    </content>
     
-
       <footer>
         <div id="authors">
           <p>
