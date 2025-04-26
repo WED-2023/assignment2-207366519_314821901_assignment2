@@ -8,7 +8,6 @@
         <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
       </head>
 <body>
-    <!-- dummy change -->
     <div class="video-background">
         <video autoplay muted loop>
             <source src="live_wallpaper.mp4" type="video/mp4">
@@ -24,13 +23,13 @@
         <div class="buttons">
           <button onclick="showScreen('register')">Sign Up</button>
           <button onclick="showScreen('login')">Sign In</button>
-          <button onclick="showScreen('game')">Game</button>
         </div>
       </div>
 
       <div id="about" class="buttons">
         <button onclick="document.getElementById('aboutModal').showModal()">About</button>
-        <button onclick="showScreen('welcome')">Home</button>
+        <!-- <button onclick="showScreen('welcome')">Home</button> -->
+        <button onclick="homefunction()">Home</button>
       </div>
 
       <dialog id="aboutModal">
@@ -230,8 +229,14 @@
         </div>
         </div>
         <canvas id = "theCanvas" width = "1000" height = "450"></canvas>
+        <div id="game-over-controls" class="buttons">
+          <button id="new-game-button" class="buttons">New Game</button>
+        </div>
      </div>
+
+
     
+
       <footer>
         <div id="authors">
           <p>

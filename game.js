@@ -1,19 +1,10 @@
-var registerdUsers = [{ userName: "p", password: "testuser" }];
+var registerdUsers = [{ userName: "p", password: "testuser", scores: [] }];
 let currentUser = null;
 let wasLoginVisible = false;
-
-// Game history tracking
-let gameHistory = [];
-let highestScore = 0;
 
 function showScreen(screenId) {
     const currentRegisterScreen = document.querySelector('#register');
     const wasRegisterVisible = currentRegisterScreen.classList.contains('active');
-  
-    // Stop the game if navigating away from game screen
-    if (screenId === 'welcome' && isCurrentlyGameRunning) {
-      stopGame();
-    }
 
     const screens = document.querySelectorAll('.content');
     screens.forEach(screen => screen.classList.remove('active'));
@@ -28,9 +19,6 @@ function showScreen(screenId) {
     }
 }
   
-
-
-
 const checkUsername = () => {
   const usernameInput = document.querySelector('#username');
   const username = usernameInput.value.trim();
@@ -48,7 +36,6 @@ const checkUsername = () => {
 const checkPassword = () => {
   const password = document.querySelector('#password').value;
   const errorSpan = document.querySelector('#passwordError');
-
   if (password.length < 8) {
     errorSpan.textContent = "Password must be at least 8 characters long.";
     return false;
@@ -128,8 +115,7 @@ const onLogInClick = () => {
     );
   
     if (user) {
-      currentUser = { username: user.userName, scores: [] };
-      console.log("the bane of the current user is: ",currentUser);
+      currentUser = user.userName;
       error.textContent = "";
       showScreen('configuration');
     } else {
@@ -155,7 +141,7 @@ const onSignUpClick = (event) => {
   const userName = document.querySelector('#username').value.trim();
   const password = document.querySelector('#password').value;
 
-  registerdUsers.push({ userName, password });
+  registerdUsers.push({ userName, password,scores : []});
   showScreen('login');
 };
 
@@ -185,8 +171,6 @@ function nextStep(stepNumber) {
     if (next) next.classList.add('active-step');
   }
   
-
-
 ['username', 'password', 'passwordConfirmation', 'email', 'givenName', 'familyName', 'dateOfBirth'].forEach(id => {
   const input = document.getElementById(id);
   if (!input) return;
@@ -258,14 +242,6 @@ about_dialog.addEventListener('click', (event) => {
   }
 });
 
-
-
-
-
-
-
-
-
 //canvas vars
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext('2d');
@@ -309,7 +285,7 @@ let lastActionTime = Date.now();
 const actionInterval = 5000;
 let SpeedupCounter = 0;
 let enemy_direction = 1; // 1 for right, -1 for left
-let isCurrentlyGameRunning=false;
+
 // Sound effects
 const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
 const shipHitSound = new Audio('heartbeat.mp3');
@@ -340,16 +316,20 @@ shipImg.src = "rocket.png";
 // Game state
 let gameOver = false;
 let gameWon = false;
+let gameOverTime = false;
 let gameStartTime = 0;
 let score = 0
 let shootkey;
 let gameTime; // Game time in seconds
+let isCurrentlyGameRunning = false;
+let animationFrameId;
 
 // Function to update lives display   
 function updateLivesDisplay() {
   const livesDisplay = document.getElementById('lives-display');
   livesDisplay.textContent =ship.health;
 }
+// updates the score display
 function updateScoreDisplay() {
   const scoreDisplay = document.getElementById('score-display');
   scoreDisplay.textContent = score;
@@ -363,7 +343,7 @@ function updateTimer() {
     timerDisplay.textContent = currentTime + 's';
   }
   if (gameTime <= currentTime) {
-    gameOver = true;
+    gameOverTime = true;
     return;
   }
 }
@@ -387,6 +367,10 @@ function StartGameAfterConfig() {
   }
   gameTime = gameTime * 60; // Convert to seconds
   showScreen('game');
+  startGame(); // Start the game
+}
+function startGame(){
+  cancelAnimationFrame(animationFrameId); // stop the old loop
   resetGame(); // Only resetGame here (don't call setupGame again)
   backgroundMusic.play(); // Start background music
   loop(); // Start the game loop
@@ -415,90 +399,10 @@ function setupGame() {
 }
 
 function loop() {
-  if (isCurrentlyGameRunning) {
-    draw();
+  if (!isCurrentlyGameRunning) return;
     update();
-    requestAnimationFrame(loop);
-  }
-}
-
-function drawScoreTable(title) {
-  // Draw scoreboard background
-  const scoreboardWidth = 500;
-  const scoreboardHeight = 400;
-  const scoreboardX = (canvas_width - scoreboardWidth) / 2;
-  const scoreboardY = (canvas_height - scoreboardHeight) / 2;
-  
-  ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-  ctx.strokeStyle = 'white';
-  ctx.lineWidth = 2;
-  ctx.fillRect(scoreboardX, scoreboardY, scoreboardWidth, scoreboardHeight);
-  ctx.strokeRect(scoreboardX, scoreboardY, scoreboardWidth, scoreboardHeight);
-  
-  // Draw title
-  ctx.fillStyle = 'white';
-  ctx.font = 'bold 36px Arial';
-  ctx.textAlign = 'center';
-  ctx.fillText(title, canvas_width / 2, scoreboardY + 50);
-  
-  // Draw current game stats
-  ctx.font = '24px Arial';
-  const timePlayed = Math.floor((Date.now() - gameStartTime) / 1000);
-  ctx.fillText(`Current Game Score: ${score}`, canvas_width / 2, scoreboardY + 100);
-  // ctx.fillText(`Time Played: ${timePlayed}s`, canvas_width / 2, scoreboardY + 130);
-  // ctx.fillText(`Enemies Defeated: ${score / 5}`, canvas_width / 2, scoreboardY + 160);
-  
-  // // Draw highest score
-  // ctx.font = 'bold 24px Arial';
-  // ctx.fillText(`Highest Score: ${highestScore}`, canvas_width / 2, scoreboardY + 200);
-  
-  if (currentUser.scores.length > 0) {
-    // Draw game history
-    ctx.font = '20px Arial';
-    ctx.fillText('Last Games History', canvas_width / 2, scoreboardY + 240);
-    
-    // Draw each game in history
-    console.log("Current User Scores: ", currentUser.scores);
-    console.log("Current User: ", currentUser);
-    currentUser.scores.forEach((game, index) => {
-      const yPos = scoreboardY + 270 + (index * 30);
-      ctx.font = '16px Arial';
-      ctx.fillText(
-        // `Game ${index + 1}: Score: ${game.score} | Time: ${game.time}s | Enemies: ${game.enemiesDefeated}`,
-        `Game ${index + 1}: Score: ${game.score} `,
-        canvas_width / 2,
-        yPos
-      );
-    });
-  }
-
-  // Add restart button
-  const buttonWidth = 150;
-  const buttonHeight = 40;
-  const buttonX = (canvas_width - buttonWidth) / 2;
-  const buttonY = scoreboardY + scoreboardHeight - 60;
-
-  // Draw button background
-  ctx.fillStyle = 'rgba(0, 255, 255, 0.2)';
-  ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
-  
-  // Draw button border
-  ctx.strokeStyle = '#00ffff';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
-  
-  // Draw button text
-  ctx.fillStyle = 'white';
-  ctx.font = '20px "Press Start 2P"';
-  ctx.fillText('Restart', canvas_width / 2, buttonY + 28);
-
-  // Store button coordinates for click handling
-  window.restartButton = {
-    x: buttonX,
-    y: buttonY,
-    width: buttonWidth,
-    height: buttonHeight
-  };
+    draw();
+    animationFrameId = requestAnimationFrame(loop);
 }
 
 function draw(){
@@ -523,30 +427,14 @@ function draw(){
       ctx.drawImage(enemy_bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
     });
   }
-
-  // Draw game over screen
-  if (gameOver) {
-    isCurrentlyGameRunning=false;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(0, 0, canvas_width, canvas_height);
-    drawScoreTable('Game Over');
-  }
-  
-  // Draw win screen
-  if (gameWon) {
-    isCurrentlyGameRunning=false;
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    ctx.fillRect(0, 0, canvas_width, canvas_height);
-    drawScoreTable('Victory');
+  //game over screen
+  if (gameOver || gameWon || gameOverTime) {
+    endGame();
   }
 }
 
 function update() {
-  // Handle restart
 
-  
-  // if (gameOver || gameWon) return;
-  
   // Update ship position with the correct speed
   if (keys["ArrowLeft"] && ship.x > ship.width + 0) ship.x -= ship_speed;
   if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship_speed;
@@ -602,8 +490,6 @@ function update() {
           }
           if (allDead) {
             gameWon = true;
-            backgroundMusic.pause(); // Stop music when game won
-            backgroundMusic.currentTime = 0; // Reset music to beginning
           }
           hit = true;
           break;
@@ -640,9 +526,7 @@ function update() {
       
       if (ship.health <= 0) {
         gameOver = true;
-        backgroundMusic.pause();
         shipHitSound.pause(); // Stop music when game over
-        backgroundMusic.currentTime = 0; // Reset music to beginning
       }
     }
   }
@@ -716,26 +600,6 @@ function enemyShoot() {
 }
 
 function resetGame() {
-  // Store game history if game ended
-  if (gameOver || gameWon) {
-    const gameResult = {
-      score: score,
-      time: Math.floor((Date.now() - gameStartTime) / 1000),
-      enemiesDefeated: score / 5,
-      date: new Date().toLocaleString()
-    };
-    
-    currentUser.scores.unshift(gameResult); // Add to beginning of array
-    if (currentUser.scores.length > 5) {
-      currentUser.scores.pop(); // Keep only last 5 games
-    }
-    
-    // Update highest score
-    if (score > highestScore) {
-      highestScore = score;
-    }
-  }
-
   // Reset ship
   ship.x = getRandomStartX();
   ship.y = SHIP_START_Y;
@@ -751,10 +615,12 @@ function resetGame() {
   gameWon = false;
   gameStartTime = Date.now(); 
   document.getElementById('timer-display').textContent = '0s';
-  
+  backgroundMusic.currentTime = 0; // Reset music to beginning
+  gameOverTime = false
+
   // Reset enemies
   enemy_speed = 5;
-  SpeedupCounter = 0;
+  SpeedupCounter = 0; // Reset the speedup counter (marked change)
   enemy_direction = 1;
   lastActionTime = Date.now();
   
@@ -765,33 +631,81 @@ function resetGame() {
   isCurrentlyGameRunning = true; // Set to true AFTER setup
 }
 
-function stopGame() {
-  if (isCurrentlyGameRunning) {
-    isCurrentlyGameRunning = false;
-    backgroundMusic.pause();
-    backgroundMusic.currentTime = 0;
-    // Clear game elements
-    bullets.length = 0;
-    enemy_bullets.length = 0;
+function endGame() {
+  backgroundMusic.pause();
+  isCurrentlyGameRunning = false;
+
+  const user = registerdUsers.find(u => u.userName === currentUser);
+  user.scores.unshift(score); // Add new score to the beginning
+  if (user.scores.length > 5) {
+    user.scores.pop(); // Keep only last 5
   }
-}
 
-// Add click handler for the restart button
-canvas.addEventListener('click', function(event) {
-  if (!gameOver && !gameWon) return;
+  // Clear canvas
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+  ctx.fillRect(0, 0, canvas_width, canvas_height);
 
-  const rect = canvas.getBoundingClientRect();
-  const x = event.clientX - rect.left;
-  const y = event.clientY - rect.top;
-  
-  if (window.restartButton) {
-    const btn = window.restartButton;
-    if (x >= btn.x && x <= btn.x + btn.width &&
-        y >= btn.y && y <= btn.y + btn.height) {
-      resetGame();
-      backgroundMusic.currentTime = 0;
-      backgroundMusic.play();
-      loop();
+  // Draw result (winner/game over)
+  ctx.fillStyle = "white";
+  ctx.font = '48px "Press Start 2P", cursive';
+  ctx.textAlign = 'center';
+  let str;
+  if(gameWon){
+    str = "!Champion"
+  }
+  else if(gameOver){
+    str = "!You Lost"
+  }
+  else{
+    if(score < 100){
+      str = "You Can Do Better"
+    }
+    else{
+      str = "!Winner"
     }
   }
+  ctx.fillText(str, canvas_width / 2, 80);
+
+  // Show current score
+  ctx.fillStyle = 'white';
+  ctx.font = '24px "Press Start 2P", cursive';
+  ctx.fillText(`Current Score: ${score}`, canvas_width / 2, 130);
+
+  // Draw scoreboard
+  drawScoreTable(user.scores);
+}
+
+function drawScoreTable(scores) {
+  ctx.fillStyle = 'white';
+  ctx.font = 'bold 28px "Press Start 2P", cursive';
+  ctx.textAlign = 'center';
+  ctx.fillText('Scoreboard (Last 5 Games)', canvas_width / 2, 180);
+
+  // Table headers
+  ctx.font = '20px "Press Start 2P", cursive';
+  ctx.fillText('Game #', canvas_width / 2 - 80, 220);
+  ctx.fillText('Score', canvas_width / 2 + 80, 220);
+
+  // Score entries
+  scores.forEach((score, index) => {
+    const y = 260 + index * 30;
+    ctx.fillText(`${index + 1}`, canvas_width / 2 - 80, y);
+    ctx.fillText(`${score}`, canvas_width / 2 + 80, y);
+  });
+}
+
+
+
+// Add click handler for the "New Game" button
+document.getElementById('new-game-button').addEventListener('click', function () {
+  isCurrentlyGameRunning = false; // Set to false when leaving game screen
+  backgroundMusic.pause();
+  startGame(); // Restart the game
 });
+
+function homefunction() {
+  isCurrentlyGameRunning = false; // Set to false when leaving game screen
+  backgroundMusic.pause(); // Pause music when leaving game screen
+  showScreen('welcome');
+}
+
