@@ -69,12 +69,7 @@ menu button {
   }
   
 
-  /* #about {
-    position: fixed;
-    top: 0;
-    left: 0;
-    margin: 10px; 
-  } */
+ 
   
   .buttons {
     margin-top: 10px;
@@ -330,6 +325,16 @@ a {
     box-shadow: 0 0 10px var(--background-color);
     color: white;
   }
+  #aboutModal button {
+    position: absolute;
+    top: 10px; /* Distance from top */
+    right: 10px; /* Distance from right */
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
 
   menu {
     position: fixed; 
