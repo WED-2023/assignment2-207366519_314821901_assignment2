@@ -697,7 +697,8 @@ function drawScoreTable(scores) {
 
 
 // Add click handler for the "New Game" button
-document.getElementById('new-game-button').addEventListener('click', function () {
+document.getElementById('new-game-button').addEventListener('click', function (event) {
+  event.target.blur();
   isCurrentlyGameRunning = false; // Set to false when leaving game screen
   backgroundMusic.pause();
   startGame(); // Restart the game
