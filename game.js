@@ -242,7 +242,6 @@ about_dialog.addEventListener('click', (event) => {
   }
 });
 
-//canvas vars
 const canvas = document.getElementById("theCanvas");
 const ctx = canvas.getContext('2d');
 const canvas_width = canvas.width
@@ -251,7 +250,6 @@ const keys = {};
 document.addEventListener("keydown", e => keys[e.key] = true);
 document.addEventListener("keyup", e => delete keys[e.key]);
 
-//bullets vars
 const bullets = [];
 let canShoot = true;
 const bulletImg = new Image();
@@ -260,17 +258,15 @@ const bullet_speed = 6;
 const bullet_width = 25;
 const bullet_height = 30;
 
-//enemy bullets vars
 const enemy_bullets = [];
 let canEnemyShoot = true;
 const enemy_bullet_speed = 6;
 const enemy_bullet_width = 25;
 const enemy_bullet_height = 30;
-const shootThreshold = canvas_height * 0.75; // 75% of canvas height
+const shootThreshold = canvas_height * 0.75;
 const enemy_bulletImg = new Image();
 enemy_bulletImg.src = "enemy_bullet.png"
 
-//enemies vars
 const enemies = [];
 const enemiesRows = 4;
 const enemiesCols = 5;
@@ -284,21 +280,18 @@ let mostRightEnemy;
 let lastActionTime = Date.now();
 const actionInterval = 5000;
 let SpeedupCounter = 0;
-let enemy_direction = 1; // 1 for right, -1 for left
+let enemy_direction = 1;
 
-// Sound effects
 const explosionSound = new Audio('medium-explosion-1_4sec.mp3');
 const shipHitSound = new Audio('heartbeat.mp3');
 const backgroundMusic = new Audio('game_sound_background.mp3');
-backgroundMusic.loop = true; // Make the music loop continuously
+backgroundMusic.loop = true;
 
-//ship vars
-const ship_speed = 7 // speed of the ship  
+const ship_speed = 7
 const SHIP_START_Y = canvas_height - 80;
 function getRandomStartX() {
-  // Ensure ship stays within canvas bounds
-  const minX = ship_speed + 40; // Minimum distance from left edge
-  const maxX = canvas_width - 40 - ship_speed; // Maximum distance from right edge
+  const minX = ship_speed + 40;
+  const maxX = canvas_width - 40 - ship_speed;
   return Math.floor(Math.random() * (maxX - minX)) + minX;
 }
 const ship = { 
@@ -312,30 +305,26 @@ const ship = {
 const shipImg = new Image();
 shipImg.src = "rocket.png";
 
-
-// Game state
 let gameOver = false;
 let gameWon = false;
 let gameOverTime = false;
 let gameStartTime = 0;
 let score = 0
 let shootkey;
-let gameTime; // Game time in seconds
+let gameTime;
 let isCurrentlyGameRunning = false;
 let animationFrameId;
 
-// Function to update lives display   
 function updateLivesDisplay() {
   const livesDisplay = document.getElementById('lives-display');
   livesDisplay.textContent =ship.health;
 }
-// updates the score display
+
 function updateScoreDisplay() {
   const scoreDisplay = document.getElementById('score-display');
   scoreDisplay.textContent = score;
 }
 
-//Game timer function
 function updateTimer() {
   const currentTime = Math.floor((Date.now() - gameStartTime) / 1000);
   if (!gameOver && !gameWon) {
@@ -365,27 +354,26 @@ function StartGameAfterConfig() {
     alert("Please enter a valid game time (min 2 minutes).");
     return;
   }
-  gameTime = gameTime * 60; // Convert to seconds
+  gameTime = gameTime * 60;
   showScreen('game');
-  startGame(); // Start the game
+  startGame();
 }
 function startGame(){
-  cancelAnimationFrame(animationFrameId); // stop the old loop
-  resetGame(); // Only resetGame here (don't call setupGame again)
-  backgroundMusic.play(); // Start background music
-  loop(); // Start the game loop
+  cancelAnimationFrame(animationFrameId);
+  resetGame();
+  backgroundMusic.play();
+  loop();
 }
-
 
 function setupGame() {
   isCurrentlyGameRunning=true;
-  const spacingX = 60; // horizontal spacing between enemies
-  const spacingY = 50; // vertical spacing between enemies
-  const startX = 50;   // starting x position
-  const startY = 30;   // starting y position
+  const spacingX = 60;
+  const spacingY = 50;
+  const startX = 50;
+  const startY = 30;
 
   for (let i = 0; i < enemiesRows; i++) {
-    enemies[i] = []; // each row is a new array
+    enemies[i] = [];
     for (let j = 0; j < enemiesCols; j++) {
       enemies[i][j] = {
         x: startX + j * spacingX,
@@ -394,8 +382,8 @@ function setupGame() {
       };
     }
   }
-  mostLeftEnemy = enemies[0][0].x; // x position of the leftmost enemy
-  mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x; // x position of the rightmost enemy
+  mostLeftEnemy = enemies[0][0].x;
+  mostRightEnemy = enemies[enemiesRows-1][enemiesCols-1].x;
 }
 
 function loop() {
@@ -408,9 +396,8 @@ function loop() {
 function draw(){
   ctx.clearRect(0, 0, canvas_width, canvas_height);
   
-  // Draw game elements if game is not over
   if (!gameOver && !gameWon) {
-    updateTimer();  // Update timer each frame
+    updateTimer();
     ctx.drawImage(shipImg, ship.x - ship.width / 2, ship.y, ship.width, ship.height);
     bullets.forEach(bullet => {
       ctx.drawImage(bulletImg, bullet.x, bullet.y, bullet_width, bullet_height)
@@ -427,31 +414,24 @@ function draw(){
       ctx.drawImage(enemy_bulletImg, bullet.x, bullet.y, enemy_bullet_width, enemy_bullet_height);
     });
   }
-  //game over screen
   if (gameOver || gameWon || gameOverTime) {
     endGame();
   }
 }
 
 function update() {
-
-  // Update ship position with the correct speed
   if (keys["ArrowLeft"] && ship.x > ship.width + 0) ship.x -= ship_speed;
   if (keys["ArrowRight"] && ship.x < canvas_width - ship.width) ship.x += ship_speed;
   if (keys["ArrowUp"] && ship.y > 0.6*canvas_height) ship.y -= ship_speed;
   if (keys["ArrowDown"] && ship.y < canvas_height - ship.height) ship.y += ship_speed;
   if (keys[shootKey]) shoot();
   
-  // Enemy shooting
   enemyShoot();
   
-  // Update bullet positions
   bullets.forEach(b => b.y -= b.speed);
   
-  // Update enemy bullet positions
   enemy_bullets.forEach(b => b.y += b.speed);
   
-  // Check for bullet-enemy collisions
   for (let i = bullets.length - 1; i >= 0; i--) {
     const bullet = bullets[i];
     
@@ -472,12 +452,10 @@ function update() {
           enemy.alive = false;
           bullets.splice(i, 1);
           score += 5 * row
-          updateScoreDisplay(); // update score display
-          // Play explosion sound
+          updateScoreDisplay();
           explosionSound.currentTime = 0;
           explosionSound.play();
           
-          // Check if all enemies are dead
           let allDead = true;
           for (let r = 0; r < enemiesRows; r++) {
             for (let c = 0; c < enemiesCols; c++) {
@@ -499,17 +477,14 @@ function update() {
     }
   }
 
-  // Check for enemy bullet-ship collisions
   for (let i = enemy_bullets.length - 1; i >= 0; i--) {
     const bullet = enemy_bullets[i];
     
-    // Remove bullets that go off screen
     if (bullet.y > canvas_height) {
       enemy_bullets.splice(i, 1);
       continue;
     }
     
-    // Check collision with ship
     if (bullet.x < ship.x + ship.width &&
         bullet.x + enemy_bullet_width > ship.x &&
         bullet.y < ship.y + ship.height &&
@@ -518,7 +493,6 @@ function update() {
       ship.health--;
       updateLivesDisplay();
       
-      // Play hit sound and reset ship position with random X
       shipHitSound.currentTime = 0;
       shipHitSound.play();
       ship.x = getRandomStartX();
@@ -526,21 +500,20 @@ function update() {
       
       if (ship.health <= 0) {
         gameOver = true;
-        shipHitSound.pause(); // Stop music when game over
+        shipHitSound.pause();
       }
     }
   }
 
-  // Update enemy movement and speed
   const now = Date.now();
   if(now - lastActionTime >= actionInterval && SpeedupCounter < 4){
     lastActionTime = now;
-    enemy_speed = enemy_speed + 1.4; // increase speed every 5 seconds
+    enemy_speed = enemy_speed + 1.4;
     SpeedupCounter++;
   }
   
   if(mostLeftEnemy <= 0 || mostRightEnemy >= canvas_width - enemy_width){
-    enemy_direction = -1 * enemy_direction; // reverse direction
+    enemy_direction = -1 * enemy_direction;
   }  
   mostLeftEnemy = Infinity;
   mostRightEnemy = -Infinity;
@@ -570,12 +543,10 @@ function shoot() {
 }
 
 function enemyShoot() {
-  // Only shoot if we can and there are no active bullets or the last bullet has passed 75% of canvas
   const canShootNew = enemy_bullets.length === 0 || 
                      enemy_bullets[enemy_bullets.length - 1].y > shootThreshold;
                      
   if (canEnemyShoot && canShootNew) {
-    // Get all alive enemies into a flat array
     const aliveEnemies = [];
     for (let row = 0; row < enemiesRows; row++) {
       for (let col = 0; col < enemiesCols; col++) {
@@ -586,7 +557,6 @@ function enemyShoot() {
     }
 
     if (aliveEnemies.length > 0) {
-      // Choose a random alive enemy
       const randomEnemy = aliveEnemies[Math.floor(Math.random() * aliveEnemies.length)];
       enemy_bullets.push({
         x: randomEnemy.x + enemy_width / 2 - enemy_bullet_width / 2,
@@ -594,41 +564,37 @@ function enemyShoot() {
         speed: enemy_bullet_speed
       });
       canEnemyShoot = false;
-      setTimeout(() => canEnemyShoot = true, 1000); // Reset shooting cooldown
+      setTimeout(() => canEnemyShoot = true, 1000);
     }
   }
 }
 
 function resetGame() {
-  // Reset ship
   ship.x = getRandomStartX();
   ship.y = SHIP_START_Y;
   ship.health = 3;
   updateLivesDisplay();
   
-  // Reset score
   score = 0;
   updateScoreDisplay();
   
-  // Reset game state
   gameOver = false;
   gameWon = false;
   gameStartTime = Date.now(); 
   document.getElementById('timer-display').textContent = '0s';
-  backgroundMusic.currentTime = 0; // Reset music to beginning
+  backgroundMusic.currentTime = 0;
   gameOverTime = false
 
-  // Reset enemies
   enemy_speed = 5;
-  SpeedupCounter = 0; // Reset the speedup counter (marked change)
+  SpeedupCounter = 0;
   enemy_direction = 1;
   lastActionTime = Date.now();
   
   bullets.length = 0;
   enemy_bullets.length = 0;
   
-  setupGame(); // Build new enemies
-  isCurrentlyGameRunning = true; // Set to true AFTER setup
+  setupGame();
+  isCurrentlyGameRunning = true;
 }
 
 function endGame() {
@@ -636,16 +602,14 @@ function endGame() {
   isCurrentlyGameRunning = false;
 
   const user = registerdUsers.find(u => u.userName === currentUser);
-  user.scores.unshift(score); // Add new score to the beginning
+  user.scores.unshift(score);
   if (user.scores.length > 5) {
-    user.scores.pop(); // Keep only last 5
+    user.scores.pop();
   }
 
-  // Clear canvas
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(0, 0, canvas_width, canvas_height);
 
-  // Draw result (winner/game over)
   ctx.fillStyle = "white";
   ctx.font = '48px "Press Start 2P", cursive';
   ctx.textAlign = 'center';
@@ -666,12 +630,10 @@ function endGame() {
   }
   ctx.fillText(str, canvas_width / 2, 80);
 
-  // Show current score
   ctx.fillStyle = 'white';
   ctx.font = '24px "Press Start 2P", cursive';
   ctx.fillText(`Current Score: ${score}`, canvas_width / 2, 130);
 
-  // Draw scoreboard
   drawScoreTable(user.scores);
 }
 
@@ -681,12 +643,10 @@ function drawScoreTable(scores) {
   ctx.textAlign = 'center';
   ctx.fillText('Scoreboard (Last 5 Games)', canvas_width / 2, 180);
 
-  // Table headers
   ctx.font = '20px "Press Start 2P", cursive';
   ctx.fillText('Game #', canvas_width / 2 - 80, 220);
   ctx.fillText('Score', canvas_width / 2 + 80, 220);
 
-  // Score entries
   scores.forEach((score, index) => {
     const y = 260 + index * 30;
     ctx.fillText(`${index + 1}`, canvas_width / 2 - 80, y);
@@ -694,19 +654,16 @@ function drawScoreTable(scores) {
   });
 }
 
-
-
-// Add click handler for the "New Game" button
 document.getElementById('new-game-button').addEventListener('click', function (event) {
   event.target.blur();
-  isCurrentlyGameRunning = false; // Set to false when leaving game screen
+  isCurrentlyGameRunning = false;
   backgroundMusic.pause();
-  startGame(); // Restart the game
+  startGame();
 });
 
 function homefunction() {
-  isCurrentlyGameRunning = false; // Set to false when leaving game screen
-  backgroundMusic.pause(); // Pause music when leaving game screen
+  isCurrentlyGameRunning = false;
+  backgroundMusic.pause();
   showScreen('welcome');
 }
 
