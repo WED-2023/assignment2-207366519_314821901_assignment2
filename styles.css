@@ -307,10 +307,12 @@ a {
   
   
   #aboutModal { 
-    background-color: transparent;
+    background-color: black;
     border-color: var(--background-color);
     box-shadow: 0 0 10px var(--background-color);
     color: white;
+    font-family: Arial, sans-serif;
+
   }
   #aboutModal button {
     position: absolute;

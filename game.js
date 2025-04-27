@@ -607,6 +607,8 @@ function endGame() {
     user.scores.pop();
   }
 
+  user.scores.sort((a, b) => b - a);
+  
   ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
   ctx.fillRect(0, 0, canvas_width, canvas_height);
 
