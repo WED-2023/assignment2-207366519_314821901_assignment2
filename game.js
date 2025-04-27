@@ -451,7 +451,7 @@ function update() {
             bullet.y + bullet_height > enemy.y) {
           enemy.alive = false;
           bullets.splice(i, 1);
-          score += 5 * row
+          score += 5 * Math.abs(row - 4);
           updateScoreDisplay();
           explosionSound.currentTime = 0;
           explosionSound.play();
